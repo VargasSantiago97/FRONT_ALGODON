@@ -23,7 +23,7 @@ import { ToastModule } from 'primeng/toast';
 })
 export class SociosComponent {
     data: any
-    selectedProducts: any = []
+    registrosSeleccionados: any = []
 
     cols: any
     selectedColumns: any
@@ -58,14 +58,6 @@ export class SociosComponent {
             { field: 'punto_venta', header: 'P.V.', type: 'numeric' }
         ]
         //type text, date, numeric
-
-        this.data = [{
-            "id": "10001",
-            "code": "value",
-            "name": "Reloj de Bambú",
-            "category": "Accesorios",
-            "quantity": 24
-        }]
         this.getSocios()
     }
     getSocios(){
@@ -104,25 +96,49 @@ export class SociosComponent {
         this.cs.apiPost('socios', this.suprimirID(this.socio)).subscribe(
             (res:any) => {
                 console.log(res)
+                this.messageService.add({ severity: 'success', summary: 'Exito!', detail: 'Guardado con exito' });
                 this.getSocios()
                 this.visible = false
             },
             (err:any) => {
                 console.error(err)
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.error ? err.error.message : "Detalles en consola" });
             }
         )
     }
     editar(){
-
+        this.cs.apiUpdate('socios', this.socio).subscribe(
+            (res:any) => {
+                console.log(res)
+                this.messageService.add({ severity: 'info', summary: 'Exito!', detail: 'Editado con exito' });
+                this.getSocios()
+                this.visible = false
+            },
+            (err:any) => {
+                console.error(err)
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.error ? err.error.message : "Detalles en consola" });
+            }
+        )
     }
-    eliminar(){  
+    eliminar(){
+        if(confirm('Desea eliminar?')){
+            this.cs.apiDelete('socios', this.socio._id).subscribe(
+                (res:any) => {
+                    console.log(res)
+                    this.messageService.add({ severity: 'info', summary: 'Exito!', detail: 'Eliminado con exito' });
+                    this.getSocios()
+                    this.visible = false
+                },
+                (err:any) => {
+                    console.error(err)
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.error ? err.error.message : "Detalles en consola" });
+                }
+            )
+        }
     }
     suprimirID(ent:any){
         var sal: any = { ...ent }
         delete sal._id
         return sal
-    }
-    show() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Message Content' });
     }
 }

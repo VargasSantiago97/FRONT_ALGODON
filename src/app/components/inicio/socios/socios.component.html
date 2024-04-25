@@ -1,28 +1,20 @@
+<h3 class="my-3">Socios:</h3>
+
 <p-table #dt1 [value]="socios" [columns]="selectedColumns" dataKey="_id" [tableStyle]="{ 'min-width': '50rem' }"
     [styleClass]="'p-datatable-sm p-datatable-striped'" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
     [tableStyle]="{ 'min-width': '50rem' }"
     currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
-    [rowsPerPageOptions]="[5, 10, 20, 50]"
-    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']" selectionMode="multiple"
-    [(selection)]="selectedProducts" [metaKeySelection]="true" dataKey="_id" [scrollable]="true" scrollHeight="100%">
+    [rowsPerPageOptions]="[5, 10, 20, 50]" selectionMode="multiple" [(selection)]="registrosSeleccionados"
+    [metaKeySelection]="true" dataKey="_id" [scrollable]="true" scrollHeight="100%">
     <ng-template pTemplate="caption">
-        <div class="row">
-            <div class="col">
-                <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
-                    selectedItemsLabel="{0} columns selected" [style]="{'min-width': '200px'}"
-                    placeholder="Choose Columns"></p-multiSelect>
 
-            </div>
-            <div class="col">
-                <div class="flex">
-                    <button type="button" class="btn btn-outline-primary" (click)="clear(dt1)">Clear</button>
-                </div>
-            </div>
-        </div>
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+            selectedItemsLabel="{0} columnas seleccionadas" [style]="{'min-width': '200px'}"
+            placeholder="Elegir columnas"></p-multiSelect>
 
+        <button type="button" class="btn btn-outline-primary m-0 mx-3 p-1" (click)="clear(dt1)">Sacar filtros</button>
 
     </ng-template>
-    <!--ng-template pTemplate="caption"> Descripcion </ng-template-->
     <ng-template pTemplate="header" let-columns>
         <tr>
 
@@ -38,11 +30,11 @@
 
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-product let-rowIndex="rowIndex" let-columns="columns">
+    <ng-template pTemplate="body" let-registro let-rowIndex="rowIndex" let-columns="columns">
 
-        <tr [pSelectableRow]="product" [pSelectableRowIndex]="rowIndex" (dblclick)="seleccionar(product)">
+        <tr [pSelectableRow]="registro" [pSelectableRowIndex]="rowIndex" (dblclick)="seleccionar(registro)">
             @for (col of columns; track $index) {
-            <td>{{ product[col.field] }}</td>
+            <td>{{ registro[col.field] }}</td>
             }
         </tr>
 
@@ -56,37 +48,37 @@
         <div>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">Razon social</span>
-                <input type="text" class="form-control" placeholder="razon_social" aria-label="razon_social" [(ngModel)]="socio.razon_social"
-                    aria-describedby="basic-addon1">
-            </div> 
+                <input type="text" class="form-control" placeholder="razon_social" aria-label="razon_social"
+                    [(ngModel)]="socio.razon_social" aria-describedby="basic-addon1">
+            </div>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">C.U.I.T.</span>
                 <input type="text" class="form-control" placeholder="cuit" aria-label="cuit" [(ngModel)]="socio.cuit"
                     aria-describedby="basic-addon1">
-            </div> 
+            </div>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">Fondo</span>
-                <input type="text" class="form-control" placeholder="fondo_remito" aria-label="fondo_remito" [(ngModel)]="socio.fondo_remito"
-                    aria-describedby="basic-addon1">
-            </div> 
+                <input type="text" class="form-control" placeholder="fondo_remito" aria-label="fondo_remito"
+                    [(ngModel)]="socio.fondo_remito" aria-describedby="basic-addon1">
+            </div>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">Punto de Venta</span>
-                <input type="text" class="form-control" placeholder="punto_venta" aria-label="punto_venta" [(ngModel)]="socio.punto_venta"
-                    aria-describedby="basic-addon1">
-            </div> 
+                <input type="text" class="form-control" placeholder="punto_venta" aria-label="punto_venta"
+                    [(ngModel)]="socio.punto_venta" aria-describedby="basic-addon1">
+            </div>
         </div>
 
 
     </ng-template>
     <ng-template pTemplate="footer">
         @if( socio._id ){
-            <button type="button" class="btn btn-success mx-1" pAutoFocus
-            [autofocus]="true" (click)="editar()">Editar</button>
-            <button type="button" class="btn btn-danger mx-1" pAutoFocus
-            [autofocus]="true" (click)="eliminar()">Eliminar</button>
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="editar()">Editar</button>
+        <button type="button" class="btn btn-danger mx-1" pAutoFocus [autofocus]="true"
+            (click)="eliminar()">Eliminar</button>
         } @else {
-            <button type="button" class="btn btn-success mx-1" pAutoFocus
-            [autofocus]="true" (click)="guardar()">Guardar</button>
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="guardar()">Guardar</button>
         }
 
         <button type="button" class="btn btn-danger mx-1" (click)="visible = false" pAutoFocus
@@ -94,6 +86,4 @@
     </ng-template>
 </p-dialog>
 
-<button type="button" class="btn btn-success mx-1" pAutoFocus
-[autofocus]="true" (click)="show()">Guardar</button>
 <p-toast></p-toast>

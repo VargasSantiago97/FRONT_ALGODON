@@ -1,1 +1,87 @@
-<p>articulos works!</p>
+<h3 class="my-3">Articulos:</h3>
+
+<p-table #dt1 [value]="articulos" [columns]="selectedColumns" dataKey="_id" [tableStyle]="{ 'min-width': '50rem' }"
+    [styleClass]="'p-datatable-sm p-datatable-striped'" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
+    [rowsPerPageOptions]="[5, 10, 20, 50]" selectionMode="multiple" [(selection)]="registrosSeleccionados"
+    [metaKeySelection]="true" dataKey="_id" [scrollable]="true" scrollHeight="100%">
+    <ng-template pTemplate="caption">
+
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+            selectedItemsLabel="{0} columnas seleccionadas" [style]="{'min-width': '200px'}"
+            placeholder="Elegir columnas"></p-multiSelect>
+
+        <button type="button" class="btn btn-outline-primary m-0 mx-3 p-1" (click)="clear(dt1)">Sacar filtros</button>
+
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+
+            @for (col of columns; track $index) {
+            <th style="min-width:15rem" pSortableColumn="{{col.field}}">
+                <div class="flex align-items-center">
+                    {{col.header}}
+                    <p-sortIcon field="{{col.field}}"></p-sortIcon>
+                    <p-columnFilter type="{{col.type}}" field="{{col.field}}" display="menu"></p-columnFilter>
+                </div>
+            </th>
+            }
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-registro let-rowIndex="rowIndex" let-columns="columns">
+
+        <tr [pSelectableRow]="registro" [pSelectableRowIndex]="rowIndex" (dblclick)="seleccionar(registro)">
+            @for (col of columns; track $index) {
+            <td>{{ registro[col.field] }}</td>
+            }
+        </tr>
+
+    </ng-template>
+</p-table>
+
+<button type="button" class="btn btn-primary" (click)="nuevo()">Nuevo</button>
+
+<p-dialog header="Transporte" [(visible)]="visible" [style]="{width: '50vw'}" [maximizable]="true">
+    <ng-template pTemplate="body">
+        <div>
+
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Codigo</span>
+                <input type="text" class="form-control" placeholder="codigo" aria-label="codigo"
+                    [(ngModel)]="articulo.codigo" aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Descripcion</span>
+                <input type="text" class="form-control" placeholder="descripcion" aria-label="descripcion"
+                    [(ngModel)]="articulo.descripcion" aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Unidad de Medida</span>
+                <input type="text" class="form-control" placeholder="unidad_medida" aria-label="unidad_medida"
+                    [(ngModel)]="articulo.unidad_medida" aria-describedby="basic-addon1">
+            </div>
+
+        </div>
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        @if( articulo._id ){
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="editar()">Editar</button>
+        <button type="button" class="btn btn-danger mx-1" pAutoFocus [autofocus]="true"
+            (click)="eliminar()">Eliminar</button>
+        } @else {
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="guardar()">Guardar</button>
+        }
+
+        <button type="button" class="btn btn-danger mx-1" (click)="visible = false" pAutoFocus
+            [autofocus]="true">Cerrar</button>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
