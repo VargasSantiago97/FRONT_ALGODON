@@ -8,7 +8,6 @@ import { Sociedad } from '../../interfaces/sociedades.interface';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ComunicacionService } from '../../services/comunicacion/comunicacion.service';
 
-
 @Component({
     selector: 'app-inicio',
     standalone: true,
@@ -33,7 +32,6 @@ export class InicioComponent {
     ){}
 
     ngOnInit() {
-
     }
 
     press(){
@@ -97,7 +95,6 @@ export class InicioComponent {
             }
         )
     }
-
     suprimirID(ent:any){
         var sal: any = { ...ent }
         delete sal._id
