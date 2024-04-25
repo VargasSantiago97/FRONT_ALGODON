@@ -12,10 +12,17 @@ export class ComunicacionService {
         private http: HttpClient,
     ) { }
 
-    apiGet(tabla:string) {
-        return this.http.get(`${this.API_URI}/api/${tabla}`);
-    }
-    apiGetId(tabla:string, idd:any) {
+
+    apiGet(tabla:string, idd:any = "") {
         return this.http.get(`${this.API_URI}/api/${tabla}/${idd}`);
+    }
+    apiPost(tabla:string, datos:any) {
+        return this.http.post(`${this.API_URI}/api/${tabla}`, datos);
+    }
+    apiUpdate(tabla:string, datos:any) {
+        return this.http.put(`${this.API_URI}/api/${tabla}/${datos._id}`, datos);
+    }
+    apiDelete(tabla:string, idd:string) {
+        return this.http.delete(`${this.API_URI}/api/${tabla}/${idd}`);
     }
 }

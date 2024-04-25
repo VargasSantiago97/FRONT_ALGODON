@@ -8,30 +8,30 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">REMITOS</a>
+                    <a class="nav-link" aria-current="page" [routerLink]="['remitos']">REMITOS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">RESUMEN</a>
+                    <a class="nav-link" [routerLink]="['resumen']">RESUMEN</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         TABLAS
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">SOCIOS</a></li>
-                        <li><a class="dropdown-item" href="#">SOCIEDADES</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['socios']">SOCIOS</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['sociedades']">SOCIEDADES</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="#">ARTICULOS</a></li>
-                        <li><a class="dropdown-item" href="#">DESTINOS</a></li>
-                        <li><a class="dropdown-item" href="#">TRANSPORTES</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['articulos']">ARTICULOS</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['destinos']">DESTINOS</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['transportes']">TRANSPORTES</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="#">ESTABLECIMIENTOS</a></li>
-                        <li><a class="dropdown-item" href="#">CAMPAÑAS</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['establecimientos']">ESTABLECIMIENTOS</a></li>
+                        <li><a class="dropdown-item" [routerLink]="['campanas']">CAMPAÑAS</a></li>
                     </ul>
                 </li>
             </ul>
@@ -40,8 +40,5 @@
 </nav>
 
 <div class="container">
-
-    <button type="button" class="btn btn-primary" (click)="press()">Primary</button>
     <router-outlet />
-
 </div>
