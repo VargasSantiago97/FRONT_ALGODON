@@ -34,7 +34,16 @@
 
         <tr [pSelectableRow]="registro" [pSelectableRowIndex]="rowIndex" (dblclick)="seleccionar(registro)">
             @for (col of columns; track $index) {
-            <td>{{ registro[col.field] }}</td>
+
+                @if (col.field == 'id_sociedad') {
+                    <td>{{ dic_sociedades[registro[col.field]] }}</td>
+                }
+                @else if (col.field == 'id_campana') {
+                    <td>{{ dic_campanas[registro[col.field]] }}</td>
+                } 
+                @else {
+                    <td>{{ registro[col.field] }}</td>
+                }
             }
         </tr>
 

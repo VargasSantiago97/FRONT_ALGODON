@@ -1,6 +1,6 @@
-<h3 class="my-3">Sociedades:</h3>
+<h3 class="my-3">Grupo de Retiros:</h3>
 
-<p-table #dt1 [value]="sociedades" [columns]="selectedColumns" dataKey="_id" [tableStyle]="{ 'min-width': '50rem' }"
+<p-table #dt1 [value]="grupo_retiros" [columns]="selectedColumns" dataKey="_id" [tableStyle]="{ 'min-width': '50rem' }"
     [styleClass]="'p-datatable-sm p-datatable-striped'" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
     [tableStyle]="{ 'min-width': '50rem' }"
     currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
@@ -43,13 +43,13 @@
 
 <button type="button" class="btn btn-primary" (click)="nuevo()">Nuevo</button>
 
-<p-dialog header="Sociedad" [(visible)]="visible" [style]="{width: '30vw'}" [maximizable]="true">
+<p-dialog header="Grupo Retiro" [(visible)]="visible" [style]="{width: '30vw'}" [maximizable]="true">
     <ng-template pTemplate="body">
         <div>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">DESCRIPCION</span>
                 <input type="text" class="form-control" placeholder="descripcion" aria-label="descripcion"
-                    [(ngModel)]="sociedad.descripcion" aria-describedby="basic-addon1">
+                    [(ngModel)]="grupo_retiro.descripcion" aria-describedby="basic-addon1">
             </div>
 
             <p-divider align="left" type="solid">
@@ -68,27 +68,23 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">%</span>
-                        <input type="number" class="form-control" placeholder="porcentaje" aria-label="porcentaje"
-                            [(ngModel)]="socioAgregar.porcentaje" aria-describedby="basic-addon1"
-                            (keyup.enter)="agregarSocio()">
-                    </div>
+                    <button type="button" class="btn btn-success" pAutoFocus [autofocus]="true"
+                        (click)="agregarSocio()">Agregar</button>
                 </div>
             </div>
 
-            @if (sociedad.socios.length) {
+            @if (grupo_retiro.socios.length) {
 
             <p-divider align="left" type="solid">
                 <b>Socios agregados</b>
             </p-divider>
 
-            @for (item of sociedad.socios; track $index) {
-            <li>{{item.razon_social}} <strong>{{item.porcentaje}} %</strong></li>
+            @for (item of grupo_retiro.socios; track $index) {
+            <li>{{item.razon_social}}</li>
             }
 
             <button type="button" class="btn btn-danger mt-5" pAutoFocus [autofocus]="true"
-                (click)="sociedad.socios = []">Eliminar socios</button>
+                (click)="grupo_retiro.socios = []">Eliminar socios</button>
 
             }
         </div>
@@ -96,7 +92,7 @@
 
     </ng-template>
     <ng-template pTemplate="footer">
-        @if( sociedad._id ){
+        @if( grupo_retiro._id ){
         <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
             (click)="editar()">Editar</button>
         <button type="button" class="btn btn-danger mx-1" pAutoFocus [autofocus]="true"

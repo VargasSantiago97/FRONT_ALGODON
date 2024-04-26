@@ -39,6 +39,9 @@ export class EstablecimientosComponent {
 
     visible: boolean = false;
 
+    dic_sociedades: any = {}
+    dic_campanas: any = {}
+
     constructor(
         private cs: ComunicacionService,
         private messageService: MessageService
@@ -58,13 +61,16 @@ export class EstablecimientosComponent {
             { field: 'hectareas', header: 'Hectareas', type: 'numeric' }
         ]
         //type text, date, numeric
-        this.getEstablecimientos()
+        this.getCampanas()
     }
-    getEstablecimientos() {
-        this.establecimientos = []
-        this.cs.apiGet('establecimientos').subscribe(
+
+    getCampanas() {
+        this.campanas = []
+        this.cs.apiGet('campanas').subscribe(
             (res: any) => {
-                this.establecimientos = res.data
+                this.campanas = res.data
+                res.data.forEach((e:any) => { this.dic_campanas[e._id] = e.descripcion });
+                console.log(this.dic_campanas)
                 this.getSociedades()
             },
             (err: any) => {
@@ -72,24 +78,25 @@ export class EstablecimientosComponent {
             }
         )
     }
+    
     getSociedades() {
         this.sociedades = []
         this.cs.apiGet('sociedades').subscribe(
             (res: any) => {
                 this.sociedades = res.data
-                console.log(res.data)
-                this.getCampanas()
+                res.data.forEach((e:any) => { this.dic_sociedades[e._id] = e.descripcion });
+                this.getEstablecimientos()
             },
             (err: any) => {
                 console.error(err)
             }
         )
     }
-    getCampanas() {
-        this.campanas = []
-        this.cs.apiGet('campanas').subscribe(
+    getEstablecimientos() {
+        this.establecimientos = []
+        this.cs.apiGet('establecimientos').subscribe(
             (res: any) => {
-                this.campanas = res.data
+                this.establecimientos = res.data
             },
             (err: any) => {
                 console.error(err)

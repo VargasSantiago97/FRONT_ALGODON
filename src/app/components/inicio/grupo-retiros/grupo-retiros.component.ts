@@ -12,17 +12,19 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
 import { Sociedad } from '../../../interfaces/sociedades.interface';
-import { Campana } from '../../../interfaces/campanas.interface';
 import { DividerModule } from 'primeng/divider';
+import { Grupo_retiro } from '../../../interfaces/grupo_retiros.interface';
+
 
 @Component({
-    selector: 'app-sociedades',
+    selector: 'app-grupo-retiros',
     standalone: true,
     imports: [TableModule, ButtonModule, ListboxModule, MultiSelectModule, FormsModule, DialogModule, ToastModule, DropdownModule, DividerModule],
-    providers: [MessageService], templateUrl: './sociedades.component.html',
-    styleUrl: './sociedades.component.css'
+    providers: [MessageService],
+    templateUrl: './grupo-retiros.component.html',
+    styleUrl: './grupo-retiros.component.css'
 })
-export class SociedadesComponent {
+export class GrupoRetirosComponent {
     data: any
     registrosSeleccionados: any = []
 
@@ -32,8 +34,8 @@ export class SociedadesComponent {
     socios: Socio[] = []
     socio!: Socio
 
-    sociedades: Sociedad[] = []
-    sociedad!: Sociedad
+    grupo_retiros: Grupo_retiro[] = []
+    grupo_retiro!: Grupo_retiro
 
     visible: boolean = false;
 
@@ -62,18 +64,18 @@ export class SociedadesComponent {
         this.cs.apiGet('socios').subscribe(
             (res: any) => {
                 this.socios = res.data
-                this.getSociedades()
+                this.getGrupoRetiros()
             },
             (err: any) => {
                 console.error(err)
             }
         )
     }
-    getSociedades() {
-        this.sociedades = []
-        this.cs.apiGet('sociedades').subscribe(
+    getGrupoRetiros() {
+        this.grupo_retiros = []
+        this.cs.apiGet('grupo_retiros').subscribe(
             (res: any) => {
-                this.sociedades = res.data
+                this.grupo_retiros = res.data
                 console.log(res)
             },
             (err: any) => {
@@ -86,37 +88,35 @@ export class SociedadesComponent {
     clear(table: Table) {
         table.clear()
     }
-    seleccionar(sociedad: Sociedad) {
-        this.sociedad = sociedad
+    seleccionar(grupo_retiro: Grupo_retiro) {
+        this.grupo_retiro = grupo_retiro
         this.visible = true
     }
     nuevo() {
-        this.sociedad = {
+        this.grupo_retiro = {
             _id: '',
             descripcion: '',
             socios: [],
         }
         this.visible = true
     }
-    agregarSocio(){
-        var socio_agregar:any = this.socios.find((e:Socio) => { return e._id == this.socioAgregar.id })
+    agregarSocio() {
+        var socio_agregar: any = this.socios.find((e: Socio) => { return e._id == this.socioAgregar.id })
 
-        if(!socio_agregar) return this.messageService.add({ severity: 'error', summary: 'Error', detail: "Socio no encontrado" });
-        if(!this.socioAgregar.porcentaje) return this.messageService.add({ severity: 'error', summary: 'Error', detail: "Porcentaje debe ser mayor a cero" });
+        if (!socio_agregar) return this.messageService.add({ severity: 'error', summary: 'Error', detail: "Socio no encontrado" });
 
-        this.sociedad.socios.push({
+        this.grupo_retiro.socios.push({
             razon_social: socio_agregar.razon_social,
-            id: socio_agregar._id,
-            porcentaje: this.socioAgregar.porcentaje
+            id: socio_agregar._id
         })
     }
 
     guardar() {
-        this.cs.apiPost('sociedades', this.suprimirID(this.sociedad)).subscribe(
+        this.cs.apiPost('grupo_retiros', this.suprimirID(this.grupo_retiro)).subscribe(
             (res: any) => {
                 console.log(res)
                 this.messageService.add({ severity: 'success', summary: 'Exito!', detail: 'Guardado con exito' });
-                this.getSociedades()
+                this.getGrupoRetiros()
                 this.visible = false
             },
             (err: any) => {
@@ -126,11 +126,11 @@ export class SociedadesComponent {
         )
     }
     editar() {
-        this.cs.apiUpdate('sociedades', this.sociedad).subscribe(
+        this.cs.apiUpdate('grupo_retiros', this.grupo_retiro).subscribe(
             (res: any) => {
                 console.log(res)
                 this.messageService.add({ severity: 'info', summary: 'Exito!', detail: 'Editado con exito' });
-                this.getSociedades()
+                this.getGrupoRetiros()
                 this.visible = false
             },
             (err: any) => {
@@ -141,11 +141,11 @@ export class SociedadesComponent {
     }
     eliminar() {
         if (confirm('Desea eliminar?')) {
-            this.cs.apiDelete('sociedades', this.sociedad._id).subscribe(
+            this.cs.apiDelete('grupo_retiros', this.grupo_retiro._id).subscribe(
                 (res: any) => {
                     console.log(res)
                     this.messageService.add({ severity: 'info', summary: 'Exito!', detail: 'Eliminado con exito' });
-                    this.getSociedades()
+                    this.getGrupoRetiros()
                     this.visible = false
                 },
                 (err: any) => {
