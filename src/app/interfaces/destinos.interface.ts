@@ -1,11 +1,11 @@
 /** DESTINOS */
 export interface Destino {
     _id: string;
-    razon_social: String;
+    razon_social: string;
     cuit: Number;
-    condicion_iva: String;
-    domicilio: String;
-    localidad: String;
-    provincia: String;
-    telefono: String;
+    condicion_iva: string;
+    domicilio: string;
+    localidad: string;
+    provincia: string;
+    telefono: string;
 }

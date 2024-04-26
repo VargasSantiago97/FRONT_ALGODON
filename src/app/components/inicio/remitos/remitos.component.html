@@ -1,1 +1,269 @@
-<p>remitos works!</p>
+<h3 class="my-3">Remitos algodón:</h3>
+
+<p-table #dt1 [value]="datosTabla" [columns]="selectedColumns" dataKey="_id" [tableStyle]="{ 'min-width': '50rem' }"
+    [styleClass]="'p-datatable-sm p-datatable-striped'" [paginator]="true" [rows]="50" [showCurrentPageReport]="true"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
+    [rowsPerPageOptions]="[5, 10, 20, 50, 100, 200, 300, 500, 1000]" selectionMode="multiple"
+    [(selection)]="registrosSeleccionados" [metaKeySelection]="true" dataKey="_id" [scrollable]="true"
+    scrollHeight="100%">
+    <ng-template pTemplate="caption">
+
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+            selectedItemsLabel="{0} columnas seleccionadas" [style]="{'min-width': '200px'}"
+            placeholder="Elegir columnas"></p-multiSelect>
+
+        <button type="button" class="btn btn-outline-primary m-0 mx-3 p-1" (click)="clear(dt1)">Sacar filtros</button>
+
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+
+            @for (col of columns; track $index) {
+            <th style="min-width:15rem" pSortableColumn="{{col.field}}">
+                <div class="flex align-items-center">
+                    {{col.header}}
+                    <p-sortIcon field="{{col.field}}"></p-sortIcon>
+                    <p-columnFilter type="{{col.type}}" field="{{col.field}}" display="menu"></p-columnFilter>
+                </div>
+            </th>
+            }
+            <th style="min-width:15rem">
+                <div class="flex align-items-center">
+                    #
+                </div>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-registro let-rowIndex="rowIndex" let-columns="columns">
+
+        <tr [pSelectableRow]="registro" [pSelectableRowIndex]="rowIndex" (dblclick)="seleccionar(registro._id)">
+            @for (col of columns; track $index) {
+            <td>{{ registro[col.field] }}</td>
+            }
+            <td>
+                <p-button [style]="{'padding':'0px', 'margin-left':'3px', 'border-radius':'5px'}" (click)="pdf(registro._id, 'd')" icon="pi pi-download"></p-button>
+                <p-button [style]="{'padding':'0px', 'margin-left':'3px', 'border-radius':'5px'}" (click)="pdf(registro._id, 'v')" icon="pi pi-eye"></p-button>
+            </td>
+        </tr>
+
+    </ng-template>
+</p-table>
+
+<button type="button" class="btn btn-primary" (click)="nuevo()">Nuevo</button>
+
+<p-dialog header="Remito" [(visible)]="visible" [style]="{width: '90vw', 'max-width':'1000px', 'min-height':'600px'}"
+    [maximizable]="true">
+    <ng-template pTemplate="body">
+        <div class="row mb-2">
+            <div class="col-12 col-lg-4 mb-2">
+                <p-dropdown [options]="socios" [(ngModel)]="remito.socio" optionLabel="razon_social" [showClear]="false"
+                    placeholder="Retira" [style]="{width: '100%'}"></p-dropdown>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">REMITO</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.punto_venta">
+                    <input type="number" aria-label="Numero" class="form-control" [(ngModel)]="remito.numero_remito">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <p-calendar class="p-calendar-sm" [(ngModel)]="remito.fecha" [showIcon]="true"
+                    dateFormat="dd/mm/yy"></p-calendar>
+            </div>
+        </div>
+
+        <p-divider align="left" type="solid">
+            <b>Datos</b>
+        </p-divider>
+
+        <div class="row mb-2">
+            <div class="col-12 col-lg-4 mb-2">
+                <p-dropdown [options]="campanas" [(ngModel)]="remito.campana" optionLabel="descripcion"
+                    [showClear]="false" placeholder="Campaña" [style]="{width: '100%'}"></p-dropdown>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <p-dropdown [options]="establecimientos" [(ngModel)]="remito.origen" optionLabel="descripcion"
+                    [showClear]="false" placeholder="Origen" [style]="{width: '100%'}"></p-dropdown>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <p-dropdown [options]="destinos" [(ngModel)]="remito.destino" optionLabel="razon_social"
+                    [showClear]="false" placeholder="Destino" [style]="{width: '100%'}"></p-dropdown>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">ROMANEO</span>
+                    <input type="text" aria-label="Romaneo" class="form-control" [(ngModel)]="remito.romaneo">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">PARTE</span>
+                    <input type="text" aria-label="Parte" class="form-control" [(ngModel)]="remito.parte">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">RECIBO</span>
+                    <input type="text" aria-label="Recibo" class="form-control" [(ngModel)]="remito.recibo">
+                </div>
+            </div>
+        </div>
+
+        <p-divider align="left" type="solid">
+            <b>Transporte</b>
+        </p-divider>
+
+        <div class="row mb-3">
+            <div class="col-12 col-lg-4 mb-2">
+
+                <p-dropdown [options]="transportes" [(ngModel)]="remito.transporte" optionLabel="razon_social"
+                    [showClear]="false" placeholder="Transporte" [style]="{width: '100%'}">
+                    <ng-template pTemplate="selectedItem">
+                        @if(remito.transporte){
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ remito.transporte.razon_social }}</div>
+                        </div>
+                        }
+                    </ng-template>
+                    <ng-template let-transp pTemplate="item">
+                        <div class="flex align-items-center gap-2">
+                            <div>{{ transp.razon_social }}, {{ transp.chofer }}, {{ transp.patente_chasis }}-{{
+                                transp.patente_acoplado }}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <input [style]="{width: '100%'}" type="text" pInputText [(ngModel)]="remito.transporte.chofer"
+                    readonly />
+            </div>
+            <div class="col-6 col-lg-2 mb-2">
+                <input [style]="{width: '100%'}" type="text" pInputText [(ngModel)]="remito.transporte.patente_chasis"
+                    readonly />
+            </div>
+            <div class="col-6 col-lg-2 mb-2">
+                <input [style]="{width: '100%'}" type="text" pInputText [(ngModel)]="remito.transporte.patente_acoplado"
+                    readonly />
+            </div>
+        </div>
+
+        <p-divider align="left" type="solid">
+            <b>Artículo</b>
+        </p-divider>
+        <div class="row mb-3">
+            <div class="col-9 mb-2">
+
+                <p-dropdown [options]="articulos" [(ngModel)]="remito.articulos" optionLabel="descripcion"
+                    [showClear]="false" placeholder="Articulo" [style]="{width: '100%'}">
+                </p-dropdown>
+
+            </div>
+
+            <div class="col-3 mb-2">
+                <input [style]="{width: '100%'}" type="number" pInputText [(ngModel)]="remito.cantidad" />
+            </div>
+        </div>
+
+        <p-divider align="left" type="solid">
+            <b>Kilos</b>
+        </p-divider>
+
+        <div class="row mb-2">
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">ORIGEN BRUTO</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_bruto">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">ORIGEN TARA</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_tara">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">ORIGEN NETO</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_neto">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">DESTINO BRUTO</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_bruto">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">DESTINO TARA</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_tara">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">DESTINO NETO</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_neto">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">FIBRA</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_fibra">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">SEMILLA</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_semilla">
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 mb-2">
+                <div class="input-group">
+                    <span class="input-group-text">REND. %</span>
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.rendimiento">
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col-12">
+                <span class="p-float-label">
+                    <textarea style="width: 100%; max-width: 100%;" id="float-input" rows="3" pInputTextarea [(ngModel)]="remito.observaciones"></textarea>
+                    <label for="float-input">Observaciones</label>
+                </span>
+            </div>
+        </div>
+
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        @if( remito._id ){
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="editar()">Editar</button>
+        <button type="button" class="btn btn-danger mx-1" pAutoFocus [autofocus]="true"
+            (click)="eliminar()">Eliminar</button>
+        } @else {
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="guardar()">Guardar</button>
+        }
+
+        <button type="button" class="btn btn-danger mx-1" (click)="visible = false" pAutoFocus
+            [autofocus]="true">Cerrar</button>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<button type="button" class="btn btn-danger mx-1" (click)="mostrar()" pAutoFocus [autofocus]="true">Remito</button>

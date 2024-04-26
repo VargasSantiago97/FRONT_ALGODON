@@ -6,7 +6,7 @@ import { Transporte } from "./transportes.interface";
 import { Articulo } from "./articulos.interface";
 
 /** SOCIEDADES */
-export interface Remitos {
+export interface Remito {
     _id: string;
     socio: Socio;
     campana: Campana;
