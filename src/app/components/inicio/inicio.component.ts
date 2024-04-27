@@ -34,67 +34,6 @@ export class InicioComponent {
     ngOnInit() {
     }
 
-    press(){
-        this.cs.apiGet('articulos').subscribe(
-            (res:any) => {
-                console.log(res)
-            },
-            (err: any) => {
-                if(err.error.error){
-                    alert(err.error.message)
-                }
-            }
-        )
-    }
-    press2(){
-        var art: Articulo = {
-            _id: '234',
-            unidad_medida: 'asasdasdasddsss',
-            descripcion: 'desc'
-        }
-
-        this.cs.apiPost('articulos', this.suprimirID(art)).subscribe(
-            (res:any) => {
-                console.log(res)
-            },
-            (err: any) => {
-                if(err.error.error){
-                    alert(err.error.message)
-                }
-            }
-        )
-    }
-    press3(){
-        var art: Articulo = {
-            _id: "6629be4cb606373d1db9e386",
-            unidad_medida: 'u.m. edit',
-            descripcion: 'desc edit'
-        }
-
-        this.cs.apiUpdate('articulos', art).subscribe(
-            (res:any) => {
-                console.log(res)
-            },
-            (err: any) => {
-                if(err.error.error){
-                    alert(err.error.message)
-                }
-            }
-        )
-    }
-    press4(){
-
-        this.cs.apiDelete('articulos', "6629be4cb606373d1db9e386").subscribe(
-            (res:any) => {
-                console.log(res)
-            },
-            (err: any) => {
-                if(err.error.error){
-                    alert(err.error.message)
-                }
-            }
-        )
-    }
     suprimirID(ent:any){
         var sal: any = { ...ent }
         delete sal._id

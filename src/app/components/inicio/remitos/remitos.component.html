@@ -20,7 +20,17 @@
         <tr>
 
             @for (col of columns; track $index) {
-            <th style="min-width:15rem" pSortableColumn="{{col.field}}">
+
+            @if (col.field == 'fecha'){
+            <th style="min-width:10rem" pSortableColumn="fecha_filtro">
+                <div class="flex align-items-center">
+                    {{col.header}}
+                    <p-sortIcon field="fecha_filtro"></p-sortIcon>
+                    <p-columnFilter type="{{col.type}}" field="fecha_filtro" display="menu"></p-columnFilter>
+                </div>
+            </th>
+            } @else {
+            <th style="min-width:10rem" pSortableColumn="{{col.field}}">
                 <div class="flex align-items-center">
                     {{col.header}}
                     <p-sortIcon field="{{col.field}}"></p-sortIcon>
@@ -28,7 +38,9 @@
                 </div>
             </th>
             }
-            <th style="min-width:15rem">
+
+            }
+            <th style="min-width:10rem">
                 <div class="flex align-items-center">
                     #
                 </div>
@@ -42,8 +54,10 @@
             <td>{{ registro[col.field] }}</td>
             }
             <td>
-                <p-button [style]="{'padding':'0px', 'margin-left':'3px', 'border-radius':'5px'}" (click)="pdf(registro._id, 'd')" icon="pi pi-download"></p-button>
-                <p-button [style]="{'padding':'0px', 'margin-left':'3px', 'border-radius':'5px'}" (click)="pdf(registro._id, 'v')" icon="pi pi-eye"></p-button>
+                <p-button [style]="{'padding':'0px', 'margin-left':'3px', 'border-radius':'5px'}"
+                    (click)="pdf(registro._id, 'd')" icon="pi pi-download"></p-button>
+                <p-button [style]="{'padding':'0px', 'margin-left':'3px', 'border-radius':'5px'}"
+                    (click)="pdf(registro._id, 'v')" icon="pi pi-eye"></p-button>
             </td>
         </tr>
 
@@ -52,7 +66,7 @@
 
 <button type="button" class="btn btn-primary" (click)="nuevo()">Nuevo</button>
 
-<p-dialog header="Remito" [(visible)]="visible" [style]="{width: '90vw', 'max-width':'1000px', 'min-height':'600px'}"
+<p-dialog header="Remito" [(visible)]="visible" [style]="{width: '90vw', 'max-width':'1200px', 'min-height':'600px'}"
     [maximizable]="true">
     <ng-template pTemplate="body">
         <div class="row mb-2">
@@ -239,7 +253,8 @@
         <div class="row my-5">
             <div class="col-12">
                 <span class="p-float-label">
-                    <textarea style="width: 100%; max-width: 100%;" id="float-input" rows="3" pInputTextarea [(ngModel)]="remito.observaciones"></textarea>
+                    <textarea style="width: 100%; max-width: 100%;" id="float-input" rows="3" pInputTextarea
+                        [(ngModel)]="remito.observaciones"></textarea>
                     <label for="float-input">Observaciones</label>
                 </span>
             </div>
@@ -265,5 +280,3 @@
 </p-dialog>
 
 <p-toast></p-toast>
-
-<button type="button" class="btn btn-danger mx-1" (click)="mostrar()" pAutoFocus [autofocus]="true">Remito</button>

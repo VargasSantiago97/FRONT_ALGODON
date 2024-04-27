@@ -104,7 +104,16 @@ export class RemitosComponent {
         this.socios = []
         this.cs.apiGet('socios').subscribe(
             (res: any) => {
-                this.socios = res.data
+                this.socios = res.data.map((e:any) => { 
+                    var dat: Socio = {
+                        _id: e._id,
+                        razon_social: e.razon_social,
+                        cuit: e.cuit,
+                        fondo_remito: e.fondo_remito,
+                        punto_venta: e.punto_venta
+                    }
+                    return dat
+                })
                 this.getCampanas()
             },
             (err: any) => {
@@ -116,7 +125,13 @@ export class RemitosComponent {
         this.campanas = []
         this.cs.apiGet('campanas').subscribe(
             (res: any) => {
-                this.campanas = res.data
+                this.campanas = res.data.map((e:any) => { 
+                    var dat: Campana = {
+                        _id: e._id,
+                        descripcion: e.descripcion
+                    }
+                    return dat
+                })
                 this.getEstablecimientos()
             },
             (err: any) => {
@@ -128,7 +143,16 @@ export class RemitosComponent {
         this.establecimientos = []
         this.cs.apiGet('establecimientos').subscribe(
             (res: any) => {
-                this.establecimientos = res.data
+                this.establecimientos = res.data.map((e:any) => { 
+                    var dat: Establecimiento = {
+                        _id: e._id,
+                        descripcion: e.descripcion,
+                        id_sociedad: e.id_sociedad,
+                        id_campana: e.id_campana,
+                        hectareas: e.hectareas
+                    }
+                    return dat
+                })
                 this.getDestinos()
             },
             (err: any) => {
@@ -140,7 +164,19 @@ export class RemitosComponent {
         this.destinos = []
         this.cs.apiGet('destinos').subscribe(
             (res: any) => {
-                this.destinos = res.data
+                this.destinos = res.data.map((e:any) => { 
+                    var dat: Destino = {
+                        _id: e._id,
+                        razon_social: e.razon_social,
+                        cuit: e.cuit,
+                        condicion_iva: e.condicion_iva,
+                        domicilio: e.domicilio,
+                        localidad: e.localidad,
+                        provincia: e.provincia,
+                        telefono: e.telefono
+                    }
+                    return dat
+                })
                 this.getTransportes()
             },
             (err: any) => {
@@ -152,7 +188,18 @@ export class RemitosComponent {
         this.transportes = []
         this.cs.apiGet('transportes').subscribe(
             (res: any) => {
-                this.transportes = res.data
+                this.transportes = res.data.map((e:any) => { 
+                    var dat: Transporte = {
+                        _id: e._id,
+                        razon_social: e.razon_social,
+                        cuit: e.cuit,
+                        domicilio: e.domicilio,
+                        chofer: e.chofer,
+                        patente_chasis: e.patente_chasis,
+                        patente_acoplado: e.patente_acoplado
+                    }
+                    return dat
+                })
                 this.getArticulos()
             },
             (err: any) => {
@@ -164,7 +211,15 @@ export class RemitosComponent {
         this.articulos = []
         this.cs.apiGet('articulos').subscribe(
             (res: any) => {
-                this.articulos = res.data
+                this.articulos = res.data.map((e:any) => { 
+                    var dat: Articulo = {
+                        _id: e._id,
+                        codigo: e.codigo,
+                        unidad_medida: e.unidad_medida,
+                        descripcion: e.descripcion
+                    }
+                    return dat
+                })
                 this.getRemitos()
             },
             (err: any) => {
@@ -190,7 +245,8 @@ export class RemitosComponent {
         this.remitos.forEach((remito: Remito) => {
             var dato = {
                 _id: remito._id,
-                fecha: new Date(remito.fecha).toLocaleDateString(),
+                fecha: new Date(remito.fecha).toLocaleDateString('es-AR'),
+                fecha_filtro: new Date(remito.fecha),
                 punto_venta: remito.punto_venta,
                 numero_remito: remito.numero_remito,
                 cantidad: remito.cantidad,
@@ -249,7 +305,6 @@ export class RemitosComponent {
             ],
             observaciones: remito?.observaciones,
         }
-        console.log(data)
         this.cs.generarPDF(data).subscribe(
             (res: any) => {
                 if (ver == 'v') {
@@ -278,7 +333,7 @@ export class RemitosComponent {
         )
     }
     mostrar() {
-        console.log()
+        console.log(this.remito)
     }
 
     clear(table: Table) {
@@ -286,9 +341,10 @@ export class RemitosComponent {
     }
     seleccionar(idd: string) {
 
-        var remito_buscado = this.remitos.find((e: Remito) => { return e._id == idd })
+        var remito_buscado:any = this.remitos.find((e: Remito) => { return e._id == idd })
 
-        this.remito.fecha = new Date()
+        this.remito = remito_buscado
+        this.remito.fecha = new Date(remito_buscado.fecha)
 
         this.visible = true
     }
@@ -338,6 +394,7 @@ export class RemitosComponent {
             observaciones: '',
             articulos: {
                 _id: '',
+                codigo: '',
                 unidad_medida: '',
                 descripcion: ''
             },
@@ -361,7 +418,6 @@ export class RemitosComponent {
     guardar() {
         this.cs.apiPost('remitos', this.suprimirID(this.remito)).subscribe(
             (res: any) => {
-                console.log(res)
                 this.messageService.add({ severity: 'success', summary: 'Exito!', detail: 'Guardado con exito' });
                 this.getRemitos()
                 this.visible = false
@@ -376,7 +432,6 @@ export class RemitosComponent {
     editar() {
         this.cs.apiUpdate('remitos', this.remito).subscribe(
             (res: any) => {
-                console.log(res)
                 this.messageService.add({ severity: 'info', summary: 'Exito!', detail: 'Editado con exito' });
                 this.getRemitos()
                 this.visible = false
@@ -391,7 +446,6 @@ export class RemitosComponent {
         if (confirm('Desea eliminar?')) {
             this.cs.apiDelete('remitos', this.remito._id).subscribe(
                 (res: any) => {
-                    console.log(res)
                     this.messageService.add({ severity: 'info', summary: 'Exito!', detail: 'Eliminado con exito' });
                     this.getRemitos()
                     this.visible = false
