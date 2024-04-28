@@ -33,7 +33,9 @@ export class ResumenComponent {
     sociedades: any = {}
     grupo_retiros: any = {}
 
-    datosRindes: any
+    datosRindes: any = []
+    datosRetiros: any = []
+    datosRetiradoresPorSocio: any = []
 
     constructor(
         private cs: ComunicacionService
@@ -43,13 +45,12 @@ export class ResumenComponent {
         this.getEstablecimientos()
     }
 
-    getEstablecimientos(){
+    getEstablecimientos() {
         this.cs.apiGet('establecimientos').subscribe(
             (res: any) => {
-                res.data.forEach((establecimiento:any) => {
+                res.data.forEach((establecimiento: any) => {
                     this.establecimientos[establecimiento._id] = establecimiento
                 })
-                console.log(this.establecimientos)
                 this.getSociedades()
             },
             (err: any) => {
@@ -57,10 +58,10 @@ export class ResumenComponent {
             }
         )
     }
-    getSociedades(){
+    getSociedades() {
         this.cs.apiGet('sociedades').subscribe(
             (res: any) => {
-                res.data.forEach((sociedad:any) => {
+                res.data.forEach((sociedad: any) => {
                     this.sociedades[sociedad._id] = sociedad
                 })
                 this.getGrupoRetiros()
@@ -70,11 +71,15 @@ export class ResumenComponent {
             }
         )
     }
-    getGrupoRetiros(){
+    getGrupoRetiros() {
         this.cs.apiGet('grupo_retiros').subscribe(
             (res: any) => {
-                res.data.forEach((grupo_retiro:any) => {
+                res.data.forEach((grupo_retiro: any) => {
                     this.grupo_retiros[grupo_retiro._id] = grupo_retiro
+
+                    grupo_retiro.socios.forEach((socio: any) => {
+                        this.datosRetiradoresPorSocio[socio.id] = grupo_retiro._id
+                    });
                 })
                 this.getRemitos()
             },
@@ -97,8 +102,8 @@ export class ResumenComponent {
         )
     }
 
-    calcularRindes(){
-        var datos = this.remitos.map((e:Remito) => {
+    calcularRindes() {
+        var datos = this.remitos.map((e: Remito) => {
             var dato = {
                 produccion: e.origen.id_sociedad,
                 establecimiento: e.origen._id,
@@ -110,9 +115,9 @@ export class ResumenComponent {
             return dato
         })
 
-        this.datosRindes = datos.reduce((result:any, item:any) => {
+        this.datosRindes = datos.reduce((result: any, item: any) => {
 
-            if(!result.some((e:any) => { return e.produccion == item.produccion })){
+            if (!result.some((e: any) => { return e.produccion == item.produccion })) {
                 result.push({
                     produccion: item.produccion,
                     establecimientos: [],
@@ -124,9 +129,9 @@ export class ResumenComponent {
                     rinde: 0
                 })
             }
-            var datosProduccion = result.find((e:any) => { return e.produccion == item.produccion })
+            var datosProduccion = result.find((e: any) => { return e.produccion == item.produccion })
 
-            if(!datosProduccion.establecimientos.some((e:any) => { return e.establecimiento == item.establecimiento })){
+            if (!datosProduccion.establecimientos.some((e: any) => { return e.establecimiento == item.establecimiento })) {
                 datosProduccion.establecimientos.push({
                     establecimiento: item.establecimiento,
                     cantidad: 0,
@@ -138,7 +143,7 @@ export class ResumenComponent {
                 })
                 datosProduccion.ha += this.establecimientos[item.establecimiento].hectareas;
             }
-            var datosEstablecimiento = datosProduccion.establecimientos.find((e:any) => { return e.establecimiento == item.establecimiento })
+            var datosEstablecimiento = datosProduccion.establecimientos.find((e: any) => { return e.establecimiento == item.establecimiento })
 
             datosProduccion.cantidad += item.cantidad;
             datosProduccion.neto += item.neto;
@@ -160,70 +165,153 @@ export class ResumenComponent {
 
         this.calcularRetiros()
     }
-    calcularRetiros(){
-        var datos = this.remitos.map((e:Remito) => {
+    calcularRetiros() {
+        var datos = this.remitos.map((e: Remito) => {
             var dato = {
                 produccion: e.origen.id_sociedad,
-                socio: e.socio._id,
-                establecimiento: e.origen._id,
+                retira: this.datosRetiradoresPorSocio[e.socio._id],
+
                 cantidad: e.cantidad,
                 neto: e.kg_destino_neto,
                 fibra: e.kg_fibra,
-                semilla: e.kg_semilla,
             }
             return dato
         })
 
-        var datosRindes = datos.reduce((result:any, item:any) => {
+        this.datosRetiros = [
+            {
+                produccion: '662b0030386e826755f3eb0b',//id sociedad
+                retiradores: [
+                    {
+                        retira: '662b181db7404d8ab0405b9e',//id establecimiento
+                        porcentaje: 50,
 
-            if(!result.some((e:any) => { return e.produccion == item.produccion })){
+                        neto_corresponde: 2,
+                        neto_retiros: 3,
+                        neto_saldo: 4,
+                        fibra_corresponde: 5,
+                        fibra_retiros: 6,
+                        fibra_saldo: 7,
+                        rollos_corresponde: 8,
+                        rollos_retiros: 9,
+                        rollos_saldo: 10,
+                    },
+                    {
+                        retira: '662b1828b7404d8ab0405ba5',//id establecimiento
+                        porcentaje: 50,
+
+                        neto_corresponde: 2,
+                        neto_retiros: 3,
+                        neto_saldo: 4,
+                        fibra_corresponde: 5,
+                        fibra_retiros: 6,
+                        fibra_saldo: 7,
+                        rollos_corresponde: 8,
+                        rollos_retiros: 9,
+                        rollos_saldo: 10,
+                    },
+                ],
+                porcentaje: 100,
+                neto_corresponde: 2,
+                neto_retiros: 3,
+                neto_saldo: 4,
+                fibra_corresponde: 5,
+                fibra_retiros: 6,
+                fibra_saldo: 7,
+                rollos_corresponde: 8,
+                rollos_retiros: 9,
+                rollos_saldo: 10,
+
+            }
+        ]
+
+        this.datosRetiros = datos.reduce((result: any, item: any) => {
+
+            if (!result.some((e: any) => { return e.produccion == item.produccion })) {
                 result.push({
                     produccion: item.produccion,
-                    establecimientos: [],
-                    cantidad: 0,
-                    ha: 0,
-                    neto: 0,
-                    fibra: 0,
-                    semilla: 0,
-                    rinde: 0
+                    retiradores: [],
+                    porcentaje: 100,
+                    neto_corresponde: 0,
+                    neto_retiros: 0,
+                    neto_saldo: 0,
+                    fibra_corresponde: 0,
+                    fibra_retiros: 0,
+                    fibra_saldo: 0,
+                    rollos_corresponde: 0,
+                    rollos_retiros: 0,
+                    rollos_saldo: 0
                 })
             }
-            var datosProduccion = result.find((e:any) => { return e.produccion == item.produccion })
+            var datosProduccion = result.find((e: any) => { return e.produccion == item.produccion })
 
-            if(!datosProduccion.establecimientos.some((e:any) => { return e.establecimiento == item.establecimiento })){
-                datosProduccion.establecimientos.push({
-                    establecimiento: item.establecimiento,
-                    cantidad: 0,
-                    ha: this.establecimientos[item.establecimiento].hectareas,
-                    neto: 0,
-                    fibra: 0,
-                    semilla: 0,
-                    rinde: 0
+            if (!datosProduccion.retiradores.some((e: any) => { return e.retira == item.retira })) {
+                datosProduccion.retiradores.push({
+                    retira: item.retira,
+                    porcentaje: this.porcentajeDeRetiradorEnSociedad(item.retira, item.produccion),
+                    neto_corresponde: 0,
+                    neto_retiros: 0,
+                    neto_saldo: 0,
+                    fibra_corresponde: 0,
+                    fibra_retiros: 0,
+                    fibra_saldo: 0,
+                    rollos_corresponde: 0,
+                    rollos_retiros: 0,
+                    rollos_saldo: 0
                 })
-                datosProduccion.ha += this.establecimientos[item.establecimiento].hectareas;
             }
-            var datosEstablecimiento = datosProduccion.establecimientos.find((e:any) => { return e.establecimiento == item.establecimiento })
 
-            datosProduccion.cantidad += item.cantidad;
-            datosProduccion.neto += item.neto;
-            datosProduccion.fibra += item.fibra;
-            datosProduccion.semilla += item.semilla;
+            var datosRetirador = datosProduccion.retiradores.find((e: any) => { return e.retira == item.retira })
 
-            datosProduccion.rinde = datosProduccion.neto / datosProduccion.ha
+            var porcentajePorRetirador = datosRetirador.porcentaje/100
+
+            //datosProduccion.cantidad += item.cantidad;
+            //datosProduccion.neto += item.neto;
+            //datosProduccion.fibra += item.fibra;
+            //datosProduccion.semilla += item.semilla;
+
+            //datosProduccion.rinde = datosProduccion.neto / datosProduccion.ha
 
 
-            datosEstablecimiento.cantidad += item.cantidad;
-            datosEstablecimiento.neto += item.neto;
-            datosEstablecimiento.fibra += item.fibra;
-            datosEstablecimiento.semilla += item.semilla;
 
-            datosEstablecimiento.rinde = datosEstablecimiento.neto / this.establecimientos[datosEstablecimiento.establecimiento].hectareas
+
+
+            datosRetirador.neto_corresponde += item.neto*porcentajePorRetirador;
+            datosRetirador.neto_retiros += item.neto;
+            datosRetirador.neto_saldo += (item.neto*porcentajePorRetirador - item.neto);
+
+            datosRetirador.fibra_corresponde += item.fibra*porcentajePorRetirador;
+            datosRetirador.fibra_retiros += item.fibra;
+            datosRetirador.fibra_saldo += (item.fibra*porcentajePorRetirador - item.fibra);
+
+            datosRetirador.rollos_corresponde += item.cantidad*porcentajePorRetirador;
+            datosRetirador.rollos_retiros += item.cantidad;
+            datosRetirador.rollos_saldo += (item.cantidad*porcentajePorRetirador - item.cantidad);
+
 
             return result;
-        }, []);
+        }, [])
+
+        console.log(this.datosRetiros)
+
+    }
+    porcentajeDeRetiradorEnSociedad(id_retirador:string, id_sociedad:string){
+        var porcentaje = 0
+        this.grupo_retiros[id_retirador].socios.forEach((socio:any) => {
+            //por cada socio del grupo de retiradores:
+            if(this.sociedades[id_sociedad].socios.some((soc:any) => { return soc.id == socio.id })){
+
+                var socioEncontrado = this.sociedades[id_sociedad].socios.find((soc:any) => { return soc.id == socio.id })
+                porcentaje += socioEncontrado.porcentaje
+            }
+
+            socio.id
+        });
+        return porcentaje
     }
 
-    toNumero(numero:any, decimales: number = 0){
+    toNumero(numero: any, decimales: number = 0) {
+        if (!numero) return '-'
         return numero.toLocaleString('es-ES', {
             minimumFractionDigits: decimales,
             maximumFractionDigits: 2
