@@ -178,6 +178,25 @@ export class ResumenComponent {
             return dato
         })
 
+        var totalesPorProduccion = datos.reduce((result: any, item: any) => {
+            if(!result[item.produccion]){
+                result[item.produccion] = {
+                    cantidad: 0,
+                    neto: 0,
+                    fibra: 0
+                }
+            }
+
+            result[item.produccion].cantidad += item.cantidad
+            result[item.produccion].neto += item.neto
+            result[item.produccion].fibra += item.fibra
+
+            return result
+        }, {})
+
+        console.log(totalesPorProduccion)
+
+        //MODELO DE OBJETO
         this.datosRetiros = [
             {
                 produccion: '662b0030386e826755f3eb0b',//id sociedad
@@ -265,29 +284,35 @@ export class ResumenComponent {
 
             var porcentajePorRetirador = datosRetirador.porcentaje/100
 
-            //datosProduccion.cantidad += item.cantidad;
-            //datosProduccion.neto += item.neto;
-            //datosProduccion.fibra += item.fibra;
-            //datosProduccion.semilla += item.semilla;
-
-            //datosProduccion.rinde = datosProduccion.neto / datosProduccion.ha
 
 
 
 
-
-            datosRetirador.neto_corresponde += item.neto*porcentajePorRetirador;
+            //suma por retirador
+            datosRetirador.neto_corresponde += totalesPorProduccion[item.produccion].neto*porcentajePorRetirador;
             datosRetirador.neto_retiros += item.neto;
-            datosRetirador.neto_saldo += (item.neto*porcentajePorRetirador - item.neto);
+            datosRetirador.neto_saldo += (totalesPorProduccion[item.produccion].neto*porcentajePorRetirador - item.neto);
 
-            datosRetirador.fibra_corresponde += item.fibra*porcentajePorRetirador;
+            datosRetirador.fibra_corresponde += totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador;
             datosRetirador.fibra_retiros += item.fibra;
-            datosRetirador.fibra_saldo += (item.fibra*porcentajePorRetirador - item.fibra);
+            datosRetirador.fibra_saldo += (totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador - item.fibra);
 
-            datosRetirador.rollos_corresponde += item.cantidad*porcentajePorRetirador;
+            datosRetirador.rollos_corresponde += totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador;
             datosRetirador.rollos_retiros += item.cantidad;
-            datosRetirador.rollos_saldo += (item.cantidad*porcentajePorRetirador - item.cantidad);
+            datosRetirador.rollos_saldo += (totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador - item.cantidad);
 
+            //suma a totales
+            datosProduccion.neto_corresponde += totalesPorProduccion[item.produccion].neto*porcentajePorRetirador;
+            datosProduccion.neto_retiros += item.neto;
+            datosProduccion.neto_saldo += (totalesPorProduccion[item.produccion].neto*porcentajePorRetirador - item.neto);
+
+            datosProduccion.fibra_corresponde += totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador;
+            datosProduccion.fibra_retiros += item.fibra;
+            datosProduccion.fibra_saldo += (totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador - item.fibra);
+
+            datosProduccion.rollos_corresponde += totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador;
+            datosProduccion.rollos_retiros += item.cantidad;
+            datosProduccion.rollos_saldo += (totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador - item.cantidad);
 
             return result;
         }, [])

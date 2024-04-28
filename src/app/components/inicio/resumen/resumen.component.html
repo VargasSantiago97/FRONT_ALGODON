@@ -1,4 +1,4 @@
-<!--div class="container my-5">
+<div class="container my-5">
     <div class="card">
         <div class="card-header">
             <h6>RINDES ESTABLECIMIENTOS</h6>
@@ -6,13 +6,13 @@
         <div class="card-body">
             @for (produccion of datosRindes; track $index) {
             <div class="table-responsive my-4">
-                <h3>{{sociedades[produccion.produccion].descripcion}}</h3>
+                <h4>Establecimientos de: <strong>{{sociedades[produccion.produccion].descripcion}}</strong></h4>
                 <table class="table table-striped table-hover table-bordered">
                     <thead>
                         <tr style="text-align: center;">
                             <th style="min-width: 100px;" scope="col">Establecimiento</th>
-                            <th style="min-width: 100px;" scope="col">Cant. Rollos</th>
                             <th style="min-width: 100px;" scope="col">Ha</th>
+                            <th style="min-width: 100px;" scope="col">Cant. Rollos</th>
                             <th style="min-width: 100px;" scope="col">Kg. Neto</th>
                             <th style="min-width: 100px;" scope="col">Fibra</th>
                             <th style="min-width: 100px;" scope="col">Semilla</th>
@@ -23,8 +23,8 @@
                         @for (establecimiento of produccion.establecimientos; track $index) {
                         <tr style="text-align: right;">
                             <th scope="row">{{establecimientos[establecimiento.establecimiento].descripcion}}</th>
-                            <td>{{toNumero(establecimiento.cantidad, 2)}}</td>
                             <td>{{toNumero(establecimiento.ha, 0)}}</td>
+                            <td>{{toNumero(establecimiento.cantidad, 2)}}</td>
                             <td>{{toNumero(establecimiento.neto, 0)}}</td>
                             <td>{{toNumero(establecimiento.fibra, 2)}}</td>
                             <td>{{toNumero(establecimiento.semilla, 2)}}</td>
@@ -35,8 +35,8 @@
                     <tfoot>
                         <tr style="text-align: right;">
                             <td><strong>TOTAL:</strong></td>
-                            <td><strong>{{toNumero(produccion.cantidad, 2)}}</strong></td>
                             <td><strong>{{toNumero(produccion.ha, 0)}}</strong></td>
+                            <td><strong>{{toNumero(produccion.cantidad, 2)}}</strong></td>
                             <td><strong>{{toNumero(produccion.neto, 0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.fibra, 2)}}</strong></td>
                             <td><strong>{{toNumero(produccion.semilla, 2)}}</strong></td>
@@ -48,7 +48,7 @@
         }
         </div>
     </div>
-</div-->
+</div>
 
 <div class="container my-5">
     <div class="card">
@@ -64,9 +64,9 @@
                         <tr style="text-align: center;">
                             <th style="min-width: 100px; padding: 2px; vertical-align: middle" scope="col" rowspan="2">RETIRA</th>
                             <th style="min-width: 50px; padding: 2px; vertical-align: middle" scope="col" rowspan="2">%</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN CANTIDAD DE ROLLOS</th>
                             <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN KILOS NETOS</th>
                             <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN KILOS FIBRA</th>
-                            <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN CANTIDAD DE ROLLOS</th>
                         </tr>
                         <tr style="text-align: center;">
                             <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
@@ -85,15 +85,15 @@
                         <tr style="text-align: right;">
                             <th scope="row">{{grupo_retiros[retirador.retira].descripcion}}</th>
                             <td>{{toNumero(retirador.porcentaje, 2)}}%</td>
+                            <td>{{toNumero(retirador.rollos_corresponde, 0)}}</td>
+                            <td>{{toNumero(retirador.rollos_retiros, 0)}}</td>
+                            <td>{{toNumero(retirador.rollos_saldo, 0)}}</td>
                             <td>{{toNumero(retirador.neto_corresponde, 0)}}</td>
                             <td>{{toNumero(retirador.neto_retiros, 0)}}</td>
                             <td>{{toNumero(retirador.neto_saldo, 0)}}</td>
                             <td>{{toNumero(retirador.fibra_corresponde, 2)}}</td>
                             <td>{{toNumero(retirador.fibra_retiros, 2)}}</td>
                             <td>{{toNumero(retirador.fibra_saldo, 2)}}</td>
-                            <td>{{toNumero(retirador.rollos_corresponde, 0)}}</td>
-                            <td>{{toNumero(retirador.rollos_retiros, 0)}}</td>
-                            <td>{{toNumero(retirador.rollos_saldo, 0)}}</td>
                         </tr>
                     }
                     </tbody>
@@ -101,15 +101,15 @@
                         <tr style="text-align: right;">
                             <td><strong>TOTAL:</strong></td>
                             <td><strong>{{toNumero(produccion.porcentaje, 2)}}%</strong></td>
+                            <td><strong>{{toNumero(produccion.rollos_corresponde, 0)}}</strong></td>
+                            <td><strong>{{toNumero(produccion.rollos_retiros, 0)}}</strong></td>
+                            <td><strong>{{toNumero(produccion.rollos_saldo, 0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.neto_corresponde, 0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.neto_retiros, 0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.neto_saldo,  0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.fibra_corresponde, 2)}}</strong></td>
                             <td><strong>{{toNumero(produccion.fibra_retiros, 2)}}</strong></td>
                             <td><strong>{{toNumero(produccion.fibra_saldo, 2)}}</strong></td>
-                            <td><strong>{{toNumero(produccion.rollos_corresponde, 0)}}</strong></td>
-                            <td><strong>{{toNumero(produccion.rollos_retiros, 0)}}</strong></td>
-                            <td><strong>{{toNumero(produccion.rollos_saldo, 0)}}</strong></td>
                         </tr>
                     </tfoot>
                 </table>

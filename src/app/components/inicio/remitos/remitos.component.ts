@@ -43,6 +43,7 @@ export class RemitosComponent {
     remito!: Remito
 
     socios: Socio[] = []
+    sociedades: Sociedad[] = []
     campanas: Campana[] = []
     establecimientos: Establecimiento[] = []
     destinos: Destino[] = []
@@ -61,6 +62,14 @@ export class RemitosComponent {
     ngOnInit() {
         this.cols = [
             { field: 'fecha', header: 'FECHA', type: 'date' },
+            { field: 'sociedad', header: 'PRODUCE', type: 'text' },
+            { field: 'origen', header: 'ORIGEN', type: 'text' },
+            { field: 'socio', header: 'RETIRA', type: 'text' },
+            { field: 'destino', header: 'DESTINO', type: 'text' },
+            { field: 'transporte', header: 'TRANSPORTE', type: 'text' },
+            { field: 'chofer', header: 'CHOFER', type: 'text' },
+            { field: 'patentes', header: 'PATENTES', type: 'text' },
+            { field: 'articulo', header: 'ARTICULO', type: 'text' },
             { field: 'punto_venta', header: 'P.V.', type: 'numeric' },
             { field: 'numero_remito', header: 'NUMERO', type: 'numeric' },
             { field: 'cantidad', header: 'CANT.', type: 'numeric' },
@@ -80,6 +89,14 @@ export class RemitosComponent {
         ]
         this.selectedColumns = [
             { field: 'fecha', header: 'FECHA', type: 'date' },
+            { field: 'sociedad', header: 'PRODUCE', type: 'text' },
+            { field: 'origen', header: 'ORIGEN', type: 'text' },
+            { field: 'socio', header: 'RETIRA', type: 'text' },
+            { field: 'destino', header: 'DESTINO', type: 'text' },
+            { field: 'transporte', header: 'TRANSPORTE', type: 'text' },
+            { field: 'chofer', header: 'CHOFER', type: 'text' },
+            { field: 'patentes', header: 'PATENTES', type: 'text' },
+            { field: 'articulo', header: 'ARTICULO', type: 'text' },
             { field: 'punto_venta', header: 'P.V.', type: 'numeric' },
             { field: 'numero_remito', header: 'NUMERO', type: 'numeric' },
             { field: 'cantidad', header: 'CANT.', type: 'numeric' },
@@ -104,7 +121,7 @@ export class RemitosComponent {
         this.socios = []
         this.cs.apiGet('socios').subscribe(
             (res: any) => {
-                this.socios = res.data.map((e:any) => { 
+                this.socios = res.data.map((e: any) => {
                     var dat: Socio = {
                         _id: e._id,
                         razon_social: e.razon_social,
@@ -114,6 +131,18 @@ export class RemitosComponent {
                     }
                     return dat
                 })
+                this.getSociedades()
+            },
+            (err: any) => {
+                console.error(err)
+            }
+        )
+    }
+    getSociedades() {
+        this.sociedades = []
+        this.cs.apiGet('sociedades').subscribe(
+            (res: any) => {
+                this.sociedades = res.data
                 this.getCampanas()
             },
             (err: any) => {
@@ -125,7 +154,7 @@ export class RemitosComponent {
         this.campanas = []
         this.cs.apiGet('campanas').subscribe(
             (res: any) => {
-                this.campanas = res.data.map((e:any) => { 
+                this.campanas = res.data.map((e: any) => {
                     var dat: Campana = {
                         _id: e._id,
                         descripcion: e.descripcion
@@ -143,7 +172,7 @@ export class RemitosComponent {
         this.establecimientos = []
         this.cs.apiGet('establecimientos').subscribe(
             (res: any) => {
-                this.establecimientos = res.data.map((e:any) => { 
+                this.establecimientos = res.data.map((e: any) => {
                     var dat: Establecimiento = {
                         _id: e._id,
                         descripcion: e.descripcion,
@@ -164,7 +193,7 @@ export class RemitosComponent {
         this.destinos = []
         this.cs.apiGet('destinos').subscribe(
             (res: any) => {
-                this.destinos = res.data.map((e:any) => { 
+                this.destinos = res.data.map((e: any) => {
                     var dat: Destino = {
                         _id: e._id,
                         razon_social: e.razon_social,
@@ -188,7 +217,7 @@ export class RemitosComponent {
         this.transportes = []
         this.cs.apiGet('transportes').subscribe(
             (res: any) => {
-                this.transportes = res.data.map((e:any) => { 
+                this.transportes = res.data.map((e: any) => {
                     var dat: Transporte = {
                         _id: e._id,
                         razon_social: e.razon_social,
@@ -211,7 +240,7 @@ export class RemitosComponent {
         this.articulos = []
         this.cs.apiGet('articulos').subscribe(
             (res: any) => {
-                this.articulos = res.data.map((e:any) => { 
+                this.articulos = res.data.map((e: any) => {
                     var dat: Articulo = {
                         _id: e._id,
                         codigo: e.codigo,
@@ -233,6 +262,7 @@ export class RemitosComponent {
             (res: any) => {
                 this.remitos = res.data
                 this.armarDatosTabla()
+                console.log(this.remitos)
             },
             (err: any) => {
                 console.error(err)
@@ -243,10 +273,20 @@ export class RemitosComponent {
     armarDatosTabla() {
         this.datosTabla = []
         this.remitos.forEach((remito: Remito) => {
+            var sociedad = this.sociedades.find((e:any) => { return e._id == remito.origen.id_sociedad })
+
             var dato = {
                 _id: remito._id,
                 fecha: new Date(remito.fecha).toLocaleDateString('es-AR'),
                 fecha_filtro: new Date(remito.fecha),
+                sociedad: sociedad?.descripcion,
+                origen: remito.origen.descripcion,
+                socio: remito.socio.razon_social,
+                destino: remito.destino.razon_social,
+                transporte: remito.transporte.razon_social,
+                chofer: remito.transporte.chofer,
+                patentes: remito.transporte.patente_chasis + "-" + remito.transporte.patente_acoplado,
+                articulo: remito.articulos.descripcion,
                 punto_venta: remito.punto_venta,
                 numero_remito: remito.numero_remito,
                 cantidad: remito.cantidad,
@@ -270,7 +310,7 @@ export class RemitosComponent {
     }
 
     pdf(idd: string, ver: string = 'v') {
-        var remito = this.remitos.find((e:Remito) => { return e._id == idd })
+        var remito = this.remitos.find((e: Remito) => { return e._id == idd })
 
         var data = {
             copias: ['ORIGINAL', 'DUPLICADO', 'TRIPLICADO'],
@@ -341,7 +381,7 @@ export class RemitosComponent {
     }
     seleccionar(idd: string) {
 
-        var remito_buscado:any = this.remitos.find((e: Remito) => { return e._id == idd })
+        var remito_buscado: any = this.remitos.find((e: Remito) => { return e._id == idd })
 
         this.remito = remito_buscado
         this.remito.fecha = new Date(remito_buscado.fecha)
@@ -349,70 +389,94 @@ export class RemitosComponent {
         this.visible = true
     }
     nuevo() {
-        this.remito = {
-            _id: '',
-            socio: {
+        if(localStorage.getItem('remito_plantilla')){
+            this.remito = JSON.parse(localStorage.getItem('remito_plantilla') || "{}")
+            this.remito.fecha = new Date(this.remito.fecha)
+        } else {
+            this.remito = {
                 _id: '',
-                razon_social: '',
-                cuit: 0,
-                fondo_remito: '',
-                punto_venta: 0
-            },
-            campana: {
-                _id: '',
-                descripcion: ''
-            },
-            punto_venta: 1,
-            numero_remito: 1,
-            fecha: new Date(),
-            origen: {
-                _id: '',
-                descripcion: '',
-                id_sociedad: '',
-                id_campana: '',
-                hectareas: 0
-            },
-            destino: {
-                _id: '',
-                razon_social: '',
-                cuit: 0,
-                condicion_iva: '',
-                domicilio: '',
-                localidad: '',
-                provincia: '',
-                telefono: ''
-            },
-            transporte: {
-                _id: '',
-                razon_social: '',
-                cuit: 0,
-                domicilio: '',
-                chofer: '',
-                patente_chasis: '',
-                patente_acoplado: ''
-            },
-            observaciones: '',
-            articulos: {
-                _id: '',
-                codigo: '',
-                unidad_medida: '',
-                descripcion: ''
-            },
-            cantidad: 0,
-            kg_origen_bruto: 0,
-            kg_origen_tara: 0,
-            kg_origen_neto: 0,
-            kg_destino_bruto: 0,
-            kg_destino_tara: 0,
-            kg_destino_neto: 0,
-            kg_fibra: 0,
-            kg_semilla: 0,
-            rendimiento: 0,
-            romaneo: '',
-            parte: '',
-            recibo: ''
+                socio: {
+                    _id: '',
+                    razon_social: '',
+                    cuit: 0,
+                    fondo_remito: '',
+                    punto_venta: 0
+                },
+                campana: {
+                    _id: '',
+                    descripcion: ''
+                },
+                punto_venta: 1,
+                numero_remito: 1,
+                fecha: new Date(),
+                origen: {
+                    _id: '',
+                    descripcion: '',
+                    id_sociedad: '',
+                    id_campana: '',
+                    hectareas: 0
+                },
+                destino: {
+                    _id: '',
+                    razon_social: '',
+                    cuit: 0,
+                    condicion_iva: '',
+                    domicilio: '',
+                    localidad: '',
+                    provincia: '',
+                    telefono: ''
+                },
+                transporte: {
+                    _id: '',
+                    razon_social: '',
+                    cuit: 0,
+                    domicilio: '',
+                    chofer: '',
+                    patente_chasis: '',
+                    patente_acoplado: ''
+                },
+                observaciones: '',
+                articulos: {
+                    _id: '',
+                    codigo: '',
+                    unidad_medida: '',
+                    descripcion: ''
+                },
+                cantidad: 0,
+                kg_origen_bruto: 0,
+                kg_origen_tara: 0,
+                kg_origen_neto: 0,
+                kg_destino_bruto: 0,
+                kg_destino_tara: 0,
+                kg_destino_neto: 0,
+                kg_fibra: 0,
+                kg_semilla: 0,
+                rendimiento: 0,
+                romaneo: '',
+                parte: '',
+                recibo: ''
+            }
         }
+
         this.visible = true
+    }
+    setearPuntoNumeroRemito(){
+        this.remito.punto_venta = this.remito.socio.punto_venta
+
+        this.remito.numero_remito = this.remitos.reduce((acc:any, remito:Remito) => {
+            if(remito.socio._id == this.remito.socio._id && remito.punto_venta == this.remito.socio.punto_venta){
+                if(remito.numero_remito > acc){
+                    return (acc+1)
+                }
+
+                return acc
+            }
+
+            return acc
+        }, 0)
+
+
+        console.log(this.remito)
     }
 
     guardar() {
@@ -427,6 +491,12 @@ export class RemitosComponent {
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.error ? err.error.message : "Detalles en consola" });
             }
         )
+    }
+    guardarPlantilla(){
+        localStorage.setItem('remito_plantilla', JSON.stringify(this.remito))
+    }
+    borrarPlantilla(){
+        localStorage.removeItem('remito_plantilla')
     }
 
     editar() {

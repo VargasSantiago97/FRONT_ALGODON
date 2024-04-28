@@ -72,13 +72,13 @@
         <div class="row mb-2">
             <div class="col-12 col-lg-4 mb-2">
                 <p-dropdown [options]="socios" [(ngModel)]="remito.socio" optionLabel="razon_social" [showClear]="false"
-                    placeholder="Retira" [style]="{width: '100%'}"></p-dropdown>
+                    placeholder="Retira" [style]="{width: '100%'}" (onChange)="setearPuntoNumeroRemito()"></p-dropdown>
             </div>
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">REMITO</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.punto_venta">
-                    <input type="number" aria-label="Numero" class="form-control" [(ngModel)]="remito.numero_remito">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.punto_venta" readonly>
+                    <input type="number" aria-label="Numero" class="form-control" [(ngModel)]="remito.numero_remito" readonly>
                 </div>
             </div>
             <div class="col-12 col-lg-4 mb-2">
@@ -264,6 +264,12 @@
 
     </ng-template>
     <ng-template pTemplate="footer">
+
+        <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
+            (click)="guardarPlantilla()">Guardar Plantilla</button>
+        <button type="button" class="btn btn-danger mx-1" (click)="borrarPlantilla()" pAutoFocus
+            [autofocus]="true">Borrar Plantilla</button>
+
         @if( remito._id ){
         <button type="button" class="btn btn-success mx-1" pAutoFocus [autofocus]="true"
             (click)="editar()">Editar</button>
