@@ -70,8 +70,7 @@ export class RemitosComponent {
             { field: 'chofer', header: 'CHOFER', type: 'text' },
             { field: 'patentes', header: 'PATENTES', type: 'text' },
             { field: 'articulo', header: 'ARTICULO', type: 'text' },
-            { field: 'punto_venta', header: 'P.V.', type: 'numeric' },
-            { field: 'numero_remito', header: 'NUMERO', type: 'numeric' },
+            { field: 'remito', header: 'REMITO', type: 'text' },
             { field: 'cantidad', header: 'CANT.', type: 'numeric' },
             { field: 'kg_origen_bruto', header: 'Orig. BRUTO', type: 'numeric' },
             { field: 'kg_origen_tara', header: 'Orig. TARA', type: 'numeric' },
@@ -97,8 +96,7 @@ export class RemitosComponent {
             { field: 'chofer', header: 'CHOFER', type: 'text' },
             { field: 'patentes', header: 'PATENTES', type: 'text' },
             { field: 'articulo', header: 'ARTICULO', type: 'text' },
-            { field: 'punto_venta', header: 'P.V.', type: 'numeric' },
-            { field: 'numero_remito', header: 'NUMERO', type: 'numeric' },
+            { field: 'remito', header: 'REMITO', type: 'text' },
             { field: 'cantidad', header: 'CANT.', type: 'numeric' },
             { field: 'kg_origen_bruto', header: 'Orig. BRUTO', type: 'numeric' },
             { field: 'kg_origen_tara', header: 'Orig. TARA', type: 'numeric' },
@@ -287,8 +285,7 @@ export class RemitosComponent {
                 chofer: remito.transporte.chofer,
                 patentes: remito.transporte.patente_chasis + "-" + remito.transporte.patente_acoplado,
                 articulo: remito.articulos.descripcion,
-                punto_venta: remito.punto_venta,
-                numero_remito: remito.numero_remito,
+                remito: remito.punto_venta.toString().padStart(4, '0') + '-' + remito.numero_remito.toString().padStart(6, '0'),
                 cantidad: remito.cantidad,
                 kg_origen_bruto: remito.kg_origen_bruto,
                 kg_origen_tara: remito.kg_origen_tara,
@@ -458,6 +455,7 @@ export class RemitosComponent {
             }
         }
 
+        this.setearPuntoNumeroRemito()
         this.visible = true
     }
     setearPuntoNumeroRemito(){
@@ -466,13 +464,14 @@ export class RemitosComponent {
         this.remito.numero_remito = this.remitos.reduce((acc:any, remito:Remito) => {
             if(remito.socio._id == this.remito.socio._id && remito.punto_venta == this.remito.socio.punto_venta){
                 if(remito.numero_remito > acc){
-                    return (acc+1)
+                    return remito.numero_remito+1
+                } else {
+                    return acc ? acc+1 : 1
                 }
-
-                return acc
+            } else {
+                return acc ? acc : 1
             }
 
-            return acc
         }, 0)
 
 
