@@ -1,13 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+declare var vars: any;
+
 @Injectable({
     providedIn: 'root'
 })
 export class ComunicacionService {
 
-    API_URI = 'http://localhost:3000'
-    API_REMITO_URI = 'http://localhost/api/pdf/remito.php'
+    API_URI = vars.API_URI || 'http://localhost:3000'
+    REMITO_URI = vars.REMITO_URI || 'http://localhost/api/pdf/remito.php'
 
     constructor(
         private http: HttpClient,
@@ -29,6 +31,6 @@ export class ComunicacionService {
 
     generarPDF(datos: any) {
         const headers = new HttpHeaders({ 'Content-Type': 'application/pdf' });
-        return this.http.post(`${this.API_REMITO_URI}?O=1`, datos, { headers, responseType: 'blob' });
+        return this.http.post(`${this.REMITO_URI}?O=1`, datos, { headers, responseType: 'blob' });
     }
 }

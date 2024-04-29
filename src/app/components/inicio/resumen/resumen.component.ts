@@ -37,6 +37,9 @@ export class ResumenComponent {
     datosRindes: any = []
     datosRetiros: any = []
     datosRetirosTotales: any = []
+    datosDestinos: any = [{
+
+    }]
 
     datosRetiradoresPorSocio: any = []
 
@@ -349,6 +352,63 @@ export class ResumenComponent {
                 retirad.rollos_saldo += ret.rollos_saldo
             });
         });
+
+        this.calcularEntregas()
+    }
+    calcularEntregas(){
+        var datos = this.remitos.map((e: Remito) => {
+            var dato = {
+                socio: e.socio.razon_social,
+                destino: e.destino.razon_social,
+
+                cantidad: e.cantidad,
+                neto: e.kg_destino_neto,
+                fibra: e.kg_fibra,
+                semilla: e.kg_semilla
+            }
+            return dato
+        })
+
+        this.datosDestinos = datos.reduce((result: any, item: any) => {
+
+            if (!result.some((e: any) => { return e.socio == item.socio })) {
+                result.push({
+                    socio: item.socio,
+                    destinos: [],
+
+                    cantidad: 0,
+                    neto: 0,
+                    fibra: 0,
+                    semilla: 0,
+                })
+            }
+            var datosSocio = result.find((e: any) => { return e.socio == item.socio })
+
+            if (!datosSocio.destinos.some((e: any) => { return e.destino == item.destino })) {
+                datosSocio.destinos.push({
+                    destino: item.destino,
+
+                    cantidad: 0,
+                    neto: 0,
+                    fibra: 0,
+                    semilla: 0,
+                })
+            }
+            var datosDestino = datosSocio.destinos.find((e: any) => { return e.destino == item.destino })
+
+            datosDestino.cantidad += item.cantidad
+            datosDestino.neto += item.neto
+            datosDestino.fibra += item.fibra
+            datosDestino.semilla += item.semilla
+
+            datosSocio.cantidad += item.cantidad
+            datosSocio.neto += item.neto
+            datosSocio.fibra += item.fibra
+            datosSocio.semilla += item.semilla
+
+            return result;
+        }, []);
+
     }
 
     porcentajeDeRetiradorEnSociedad(id_retirador:string, id_sociedad:string){

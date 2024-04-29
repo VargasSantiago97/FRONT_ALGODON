@@ -1,5 +1,5 @@
-<div class="container my-5">
-    <div class="card">
+
+    <div class="card mb-5">
         <div class="card-header">
             <h6>RINDES ESTABLECIMIENTOS - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
         </div>
@@ -11,12 +11,12 @@
                     <thead>
                         <tr style="text-align: center;">
                             <th style="min-width: 100px;" scope="col">Establecimiento</th>
-                            <th style="min-width: 100px;" scope="col">Ha</th>
-                            <th style="min-width: 100px;" scope="col">Cant. Rollos</th>
-                            <th style="min-width: 100px;" scope="col">Kg. Neto</th>
-                            <th style="min-width: 100px;" scope="col">Fibra</th>
-                            <th style="min-width: 100px;" scope="col">Semilla</th>
-                            <th style="min-width: 100px;" scope="col">Rinde</th>
+                            <th style="min-width: 100px;" scope="col">Sup. [HA]</th>
+                            <th style="min-width: 100px;" scope="col">Rollos [Cant.]</th>
+                            <th style="min-width: 100px;" scope="col">Neto [KG]</th>
+                            <th style="min-width: 100px;" scope="col">Fibra [KG]</th>
+                            <th style="min-width: 100px;" scope="col">Semilla [KG]</th>
+                            <th style="min-width: 100px;" scope="col">Rinde [KG NETO/HA]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,7 +24,7 @@
                         <tr style="text-align: right;">
                             <th scope="row">{{establecimientos[establecimiento.establecimiento].descripcion}}</th>
                             <td>{{toNumero(establecimiento.ha, 0)}}</td>
-                            <td>{{toNumero(establecimiento.cantidad, 2)}}</td>
+                            <td>{{toNumero(establecimiento.cantidad, 0)}}</td>
                             <td>{{toNumero(establecimiento.neto, 0)}}</td>
                             <td>{{toNumero(establecimiento.fibra, 2)}}</td>
                             <td>{{toNumero(establecimiento.semilla, 2)}}</td>
@@ -36,7 +36,7 @@
                         <tr style="text-align: right;">
                             <td><strong>TOTAL:</strong></td>
                             <td><strong>{{toNumero(produccion.ha, 0)}}</strong></td>
-                            <td><strong>{{toNumero(produccion.cantidad, 2)}}</strong></td>
+                            <td><strong>{{toNumero(produccion.cantidad, 0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.neto, 0)}}</strong></td>
                             <td><strong>{{toNumero(produccion.fibra, 2)}}</strong></td>
                             <td><strong>{{toNumero(produccion.semilla, 2)}}</strong></td>
@@ -48,12 +48,10 @@
         }
         </div>
     </div>
-</div>
 
-<div class="container my-5">
-    <div class="card">
+    <div class="card mb-5">
         <div class="card-header">
-            <h6>RETIROS - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
+            <h6>RETIROS POR SOCIEDAD - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
         </div>
         <div class="card-body">
             @for (produccion of datosRetiros; track $index) {
@@ -117,11 +115,8 @@
         }
         </div>
     </div>
-</div>
 
-
-<div class="container my-5">
-    <div class="card">
+    <div class="card mb-5">
         <div class="card-header">
             <h6>RETIROS TOTALES - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
         </div>
@@ -181,4 +176,51 @@
             </div>
         </div>
     </div>
-</div>
+
+    <div class="card mb-5">
+        <div class="card-header">
+            <h6>ENTREGAS/DESTINOS - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
+        </div>
+        <div class="card-body">
+            @for (entregador of datosDestinos; track $index) {
+            <div class="table-responsive my-4">
+                <h4>Entregas de: <strong>{{entregador.socio}}</strong></h4>
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th style="min-width: 100px; padding: 2px; vertical-align: middle" scope="col" rowspan="2">DESTINO</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col" colspan="4">ENTREGAS</th>
+                        </tr>
+                        <tr style="text-align: center;">
+                            <th style="min-width: 100px; padding: 2px;" scope="col">ROLLOS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">KG NETO</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">KG FIBRA</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">KG SEMILLA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (destino of entregador.destinos; track $index) {
+                        <tr style="text-align: right;">
+                            <th scope="row">{{destino.destino}}</th>
+
+                            <td>{{toNumero(destino.cantidad, 0)}}</td>
+                            <td>{{toNumero(destino.neto, 0)}}</td>
+                            <td>{{toNumero(destino.fibra, 2)}}</td>
+                            <td>{{toNumero(destino.semilla, 2)}}</td>
+                        </tr>
+                    }
+                    </tbody>
+                    <tfoot>
+                        <tr style="text-align: right;">
+                            <td><strong>TOTAL:</strong></td>
+                            <td><strong>{{toNumero(entregador.cantidad, 0)}}</strong></td>
+                            <td><strong>{{toNumero(entregador.neto, 0)}}</strong></td>
+                            <td><strong>{{toNumero(entregador.fibra, 2)}}</strong></td>
+                            <td><strong>{{toNumero(entregador.semilla, 2)}}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        </div>
+    </div>

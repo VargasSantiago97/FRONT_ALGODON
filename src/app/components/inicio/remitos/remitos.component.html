@@ -1,5 +1,7 @@
 <h3 class="my-3">Remitos algodón:</h3>
 
+<button type="button" class="btn btn-primary" (click)="nuevo()">Nuevo</button>
+
 <p-table #dt1 [value]="datosTabla" [columns]="selectedColumns" dataKey="_id" [tableStyle]="{ 'min-width': '50rem' }"
     [styleClass]="'p-datatable-sm p-datatable-striped'" [paginator]="true" [rows]="50" [showCurrentPageReport]="true"
     [tableStyle]="{ 'min-width': '50rem' }"
@@ -13,7 +15,8 @@
             selectedItemsLabel="{0} columnas seleccionadas" [style]="{'min-width': '200px'}"
             placeholder="Elegir columnas"></p-multiSelect>
 
-        <button type="button" class="btn btn-outline-primary m-0 mx-3 p-1" (click)="clear(dt1)">Sacar filtros</button>
+        <button type="button" class="btn btn-outline-primary m-0 mx-3 p-1" style="width: 110px;" (click)="clear(dt1)">Sacar filtros</button>
+        <button type="button" class="btn btn-outline-primary m-0 p-1" style="width: 110px;" (click)="exportToXLSX()">XLSX</button>
 
     </ng-template>
     <ng-template pTemplate="header" let-columns>
@@ -194,19 +197,19 @@
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">ORIGEN BRUTO</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_bruto">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_bruto" (keyup)="calcularOrigen('bruto')">
                 </div>
             </div>
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">ORIGEN TARA</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_tara">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_tara" (keyup)="calcularOrigen('tara')">
                 </div>
             </div>
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">ORIGEN NETO</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_neto">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_origen_neto" (keyup)="calcularOrigen('neto')">
                 </div>
             </div>
         </div>
@@ -215,19 +218,19 @@
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">DESTINO BRUTO</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_bruto">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_bruto" (keyup)="calcularDestino('bruto')">
                 </div>
             </div>
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">DESTINO TARA</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_tara">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_tara" (keyup)="calcularDestino('tara')">
                 </div>
             </div>
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">DESTINO NETO</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_neto">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_destino_neto" (keyup)="calcularDestino('neto')">
                 </div>
             </div>
         </div>
@@ -236,7 +239,7 @@
             <div class="col-12 col-lg-4 mb-2">
                 <div class="input-group">
                     <span class="input-group-text">FIBRA</span>
-                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_fibra">
+                    <input type="number" aria-label="Punto" class="form-control" [(ngModel)]="remito.kg_fibra" (keyup)="calcularPorcentaje()">
                 </div>
             </div>
             <div class="col-12 col-lg-4 mb-2">

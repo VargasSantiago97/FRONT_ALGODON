@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ComunicacionService } from '../../../services/comunicacion/comunicacion.service';
 import { FormsModule } from '@angular/forms';
+import * as XLSX from 'xlsx';
 
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -261,7 +262,7 @@ export class RemitosComponent {
         this.remitos = []
         this.cs.apiGet('remitos').subscribe(
             (res: any) => {
-                this.remitos = res.data.filter((e:Remito) => { return e.campana._id == localStorage.getItem('campana_seleccioanda') })
+                this.remitos = res.data.filter((e: Remito) => { return e.campana._id == localStorage.getItem('campana_seleccioanda') })
                 this.armarDatosTabla()
             },
             (err: any) => {
@@ -273,7 +274,7 @@ export class RemitosComponent {
     armarDatosTabla() {
         this.datosTabla = []
         this.remitos.forEach((remito: Remito) => {
-            var sociedad = this.sociedades.find((e:any) => { return e._id == remito.origen.id_sociedad })
+            var sociedad = this.sociedades.find((e: any) => { return e._id == remito.origen.id_sociedad })
 
             var dato = {
                 _id: remito._id,
@@ -388,7 +389,7 @@ export class RemitosComponent {
         this.visible = true
     }
     nuevo() {
-        if(localStorage.getItem('remito_plantilla')){
+        if (localStorage.getItem('remito_plantilla')) {
             this.remito = JSON.parse(localStorage.getItem('remito_plantilla') || "{}")
             this.remito.fecha = new Date(this.remito.fecha)
         } else {
@@ -461,15 +462,15 @@ export class RemitosComponent {
         this.setearEstablecimientosEnCampana()
         this.visible = true
     }
-    setearPuntoNumeroRemito(){
+    setearPuntoNumeroRemito() {
         this.remito.punto_venta = this.remito.socio.punto_venta
 
-        this.remito.numero_remito = this.remitos.reduce((acc:any, remito:Remito) => {
-            if(remito.socio._id == this.remito.socio._id && remito.punto_venta == this.remito.socio.punto_venta){
-                if(remito.numero_remito > acc){
-                    return remito.numero_remito+1
+        this.remito.numero_remito = this.remitos.reduce((acc: any, remito: Remito) => {
+            if (remito.socio._id == this.remito.socio._id && remito.punto_venta == this.remito.socio.punto_venta) {
+                if (remito.numero_remito > acc) {
+                    return remito.numero_remito + 1
                 } else {
-                    return acc ? acc+1 : 1
+                    return acc ? acc + 1 : 1
                 }
             } else {
                 return acc ? acc : 1
@@ -480,10 +481,59 @@ export class RemitosComponent {
 
         console.log(this.remito)
     }
-    setearEstablecimientosEnCampana(){
-        this.establecimientosEnCampana = this.establecimientos.filter((e:Establecimiento) => {
+    setearEstablecimientosEnCampana() {
+        this.establecimientosEnCampana = this.establecimientos.filter((e: Establecimiento) => {
             return e.id_campana == this.remito.campana._id
         })
+    }
+
+    calcularOrigen(cuadro: any){
+        if(cuadro == 'neto'){
+            if(this.remito.kg_origen_tara){
+                this.remito.kg_origen_bruto = this.remito.kg_origen_neto + this.remito.kg_origen_tara
+            }
+        }
+
+        if(cuadro == 'bruto'){
+            if(this.remito.kg_origen_tara){
+                this.remito.kg_origen_neto = this.remito.kg_origen_bruto - this.remito.kg_origen_tara
+            } else if (this.remito.kg_origen_neto){
+                this.remito.kg_origen_tara = this.remito.kg_origen_bruto - this.remito.kg_origen_neto
+            }
+        }
+
+        if(cuadro == 'tara'){
+            if(this.remito.kg_origen_bruto){
+                this.remito.kg_origen_neto = this.remito.kg_origen_bruto - this.remito.kg_origen_tara
+            }
+        }
+    }
+    calcularDestino(cuadro: any){
+        if(cuadro == 'neto'){
+            if(this.remito.kg_destino_tara){
+                this.remito.kg_destino_bruto = this.remito.kg_destino_neto + this.remito.kg_destino_tara
+            }
+        }
+
+        if(cuadro == 'bruto'){
+            if(this.remito.kg_destino_tara){
+                this.remito.kg_destino_neto = this.remito.kg_destino_bruto - this.remito.kg_destino_tara
+            } else if (this.remito.kg_destino_neto){
+                this.remito.kg_destino_tara = this.remito.kg_destino_bruto - this.remito.kg_destino_neto
+            }
+        }
+
+        if(cuadro == 'tara'){
+            if(this.remito.kg_destino_bruto){
+                this.remito.kg_destino_neto = this.remito.kg_destino_bruto - this.remito.kg_destino_tara
+            }
+        }
+        this.calcularPorcentaje()
+    }
+    calcularPorcentaje(){
+        if (this.remito.kg_destino_neto && this.remito.kg_fibra){
+            this.remito.rendimiento = parseFloat((this.remito.kg_fibra/this.remito.kg_destino_neto*100).toFixed(2))
+        }
     }
 
     guardar() {
@@ -499,10 +549,14 @@ export class RemitosComponent {
             }
         )
     }
-    guardarPlantilla(){
-        localStorage.setItem('remito_plantilla', JSON.stringify(this.remito))
+    guardarPlantilla() {
+        var remito_guardar: any = { ... this.remito }
+        if (this.remito._id) {
+            delete remito_guardar._id
+        }
+        localStorage.setItem('remito_plantilla', JSON.stringify(remito_guardar))
     }
-    borrarPlantilla(){
+    borrarPlantilla() {
         localStorage.removeItem('remito_plantilla')
     }
 
@@ -538,5 +592,21 @@ export class RemitosComponent {
         var sal: any = { ...ent }
         delete sal._id
         return sal
+    }
+    exportToXLSX() {
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.datosTabla);
+        const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveAsExcelFile(excelBuffer, 'export.xlsx');
+    }
+
+    private saveAsExcelFile(buffer: any, fileName: string): void {
+        const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+        const a: HTMLAnchorElement = document.createElement('a');
+        document.body.appendChild(a);
+        a.href = URL.createObjectURL(data);
+        a.download = fileName;
+        a.click();
+        document.body.removeChild(a);
     }
 }
