@@ -1,7 +1,7 @@
 <div class="container my-5">
     <div class="card">
         <div class="card-header">
-            <h6>RINDES ESTABLECIMIENTOS</h6>
+            <h6>RINDES ESTABLECIMIENTOS - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
         </div>
         <div class="card-body">
             @for (produccion of datosRindes; track $index) {
@@ -53,7 +53,7 @@
 <div class="container my-5">
     <div class="card">
         <div class="card-header">
-            <h6>RETIROS</h6>
+            <h6>RETIROS - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
         </div>
         <div class="card-body">
             @for (produccion of datosRetiros; track $index) {
@@ -70,13 +70,13 @@
                         </tr>
                         <tr style="text-align: center;">
                             <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
-                            <th style="min-width: 100px; padding: 2px;" scope="col">RERIROS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">RETIROS</th>
                             <th style="min-width: 100px; padding: 2px;" scope="col">SALDO</th>
-                            <th style="min-width: 100px; padding: 2px;" scope="col">Corresp.</th>
-                            <th style="min-width: 100px; padding: 2px;" scope="col">Retiros</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">RETIROS</th>
                             <th style="min-width: 100px; padding: 2px;" scope="col">SALDO</th>
-                            <th style="min-width: 100px; padding: 2px;" scope="col">Corresp.</th>
-                            <th style="min-width: 100px; padding: 2px;" scope="col">Retiros</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">RETIROS</th>
                             <th style="min-width: 100px; padding: 2px;" scope="col">SALDO</th>
                         </tr>
                     </thead>
@@ -115,6 +115,70 @@
                 </table>
             </div>
         }
+        </div>
+    </div>
+</div>
+
+
+<div class="container my-5">
+    <div class="card">
+        <div class="card-header">
+            <h6>RETIROS TOTALES - CAMPAÑA {{campana ? campana.descripcion : ''}}</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive my-4">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th style="min-width: 100px; padding: 2px; vertical-align: middle" scope="col" rowspan="2">RETIRA</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN CANTIDAD DE ROLLOS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN KILOS NETOS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col" colspan="3">EN KILOS FIBRA</th>
+                        </tr>
+                        <tr style="text-align: center;">
+                            <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">RETIROS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">SALDO</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">RETIROS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">SALDO</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">CORRESP.</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">RETIROS</th>
+                            <th style="min-width: 100px; padding: 2px;" scope="col">SALDO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (retirador of datosRetirosTotales.retiradores; track $index) {
+                        <tr style="text-align: right;">
+                            <th scope="row">{{grupo_retiros[retirador.retira].descripcion}}</th>
+                            <td>{{toNumero(retirador.rollos_corresponde, 0)}}</td>
+                            <td>{{toNumero(retirador.rollos_retiros, 0)}}</td>
+                            <td>{{toNumero(retirador.rollos_saldo, 0)}}</td>
+                            <td>{{toNumero(retirador.neto_corresponde, 0)}}</td>
+                            <td>{{toNumero(retirador.neto_retiros, 0)}}</td>
+                            <td>{{toNumero(retirador.neto_saldo, 0)}}</td>
+                            <td>{{toNumero(retirador.fibra_corresponde, 2)}}</td>
+                            <td>{{toNumero(retirador.fibra_retiros, 2)}}</td>
+                            <td>{{toNumero(retirador.fibra_saldo, 2)}}</td>
+                        </tr>
+                    }
+                    </tbody>
+                    <tfoot>
+                        <tr style="text-align: right;">
+                            <td><strong>TOTAL:</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.rollos_corresponde, 0)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.rollos_retiros, 0)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.rollos_saldo, 0)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.neto_corresponde, 0)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.neto_retiros, 0)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.neto_saldo,  0)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.fibra_corresponde, 2)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.fibra_retiros, 2)}}</strong></td>
+                            <td><strong>{{toNumero(datosRetirosTotales.fibra_saldo, 2)}}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </div>

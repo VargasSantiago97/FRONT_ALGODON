@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { AccordionModule } from 'primeng/accordion';
 
-import { Articulo } from '../../interfaces/articulos.interface';
 import { Campana } from '../../interfaces/campanas.interface';
-import { Sociedad } from '../../interfaces/sociedades.interface';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ComunicacionService } from '../../services/comunicacion/comunicacion.service';
 
@@ -17,27 +15,40 @@ import { ComunicacionService } from '../../services/comunicacion/comunicacion.se
 })
 
 export class InicioComponent {
-    articulos!: Articulo[]
-    campanas!: Campana[]
-    sociedades!: Sociedad[]
 
-    varr = false;
-
-    varrr = [1, 2, 3, 4]
-
-    activeIndex: any = 0
+    campana!: Campana
+    campanas: Campana[] = []
 
     constructor(
         private cs: ComunicacionService
     ){}
 
     ngOnInit() {
+        this.getCampanas()
     }
 
-    suprimirID(ent:any){
-        var sal: any = { ...ent }
-        delete sal._id
-        return sal
+    getCampanas(){
+        this.cs.apiGet('campanas').subscribe(
+            (res:any) => {
+                this.campanas = res.data
+
+                if(!localStorage.getItem('campana_seleccioanda')){
+                    alert('Seleccionar Campaña a trabajar')
+                } else {
+                    var campp = this.campanas.find((e:Campana) => { return e._id == localStorage.getItem('campana_seleccioanda') })
+                    if(campp){
+                        this.campana = campp
+                    }
+                }
+            },
+            (err:any) => {
+                console.error(err)
+            }
+        )
+    }
+    seleccionarCampana(idd: any){
+        localStorage.setItem('campana_seleccioanda', idd)
+        location.reload();
     }
 
 }

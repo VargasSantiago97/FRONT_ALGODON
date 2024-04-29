@@ -16,6 +16,7 @@ import { Remito } from '../../../interfaces/remitos.interface';
 import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { Campana } from '../../../interfaces/campanas.interface';
 
 
 @Component({
@@ -35,7 +36,12 @@ export class ResumenComponent {
 
     datosRindes: any = []
     datosRetiros: any = []
+    datosRetirosTotales: any = []
+
     datosRetiradoresPorSocio: any = []
+
+    campanas: Campana[] = []
+    campana!: Campana
 
     constructor(
         private cs: ComunicacionService
@@ -51,6 +57,19 @@ export class ResumenComponent {
                 res.data.forEach((establecimiento: any) => {
                     this.establecimientos[establecimiento._id] = establecimiento
                 })
+                this.getCampanas()
+            },
+            (err: any) => {
+                console.error(err)
+            }
+        )
+    }
+    getCampanas() {
+        this.cs.apiGet('campanas').subscribe(
+            (res: any) => {
+                this.campanas = res.data
+                this.campana = this.campanas.find((e:any) => { return e._id == localStorage.getItem('campana_seleccioanda') }) || {_id: '', descripcion: ''}
+
                 this.getSociedades()
             },
             (err: any) => {
@@ -93,7 +112,7 @@ export class ResumenComponent {
         this.remitos = []
         this.cs.apiGet('remitos').subscribe(
             (res: any) => {
-                this.remitos = res.data
+                this.remitos = res.data.filter((e:Remito) => { return e.campana._id == this.campana._id})
                 this.calcularRindes()
             },
             (err: any) => {
@@ -194,55 +213,6 @@ export class ResumenComponent {
             return result
         }, {})
 
-        console.log(totalesPorProduccion)
-
-        //MODELO DE OBJETO
-        this.datosRetiros = [
-            {
-                produccion: '662b0030386e826755f3eb0b',//id sociedad
-                retiradores: [
-                    {
-                        retira: '662b181db7404d8ab0405b9e',//id establecimiento
-                        porcentaje: 50,
-
-                        neto_corresponde: 2,
-                        neto_retiros: 3,
-                        neto_saldo: 4,
-                        fibra_corresponde: 5,
-                        fibra_retiros: 6,
-                        fibra_saldo: 7,
-                        rollos_corresponde: 8,
-                        rollos_retiros: 9,
-                        rollos_saldo: 10,
-                    },
-                    {
-                        retira: '662b1828b7404d8ab0405ba5',//id establecimiento
-                        porcentaje: 50,
-
-                        neto_corresponde: 2,
-                        neto_retiros: 3,
-                        neto_saldo: 4,
-                        fibra_corresponde: 5,
-                        fibra_retiros: 6,
-                        fibra_saldo: 7,
-                        rollos_corresponde: 8,
-                        rollos_retiros: 9,
-                        rollos_saldo: 10,
-                    },
-                ],
-                porcentaje: 100,
-                neto_corresponde: 2,
-                neto_retiros: 3,
-                neto_saldo: 4,
-                fibra_corresponde: 5,
-                fibra_retiros: 6,
-                fibra_saldo: 7,
-                rollos_corresponde: 8,
-                rollos_retiros: 9,
-                rollos_saldo: 10,
-
-            }
-        ]
 
         this.datosRetiros = datos.reduce((result: any, item: any) => {
 
@@ -285,41 +255,102 @@ export class ResumenComponent {
             var porcentajePorRetirador = datosRetirador.porcentaje/100
 
 
-
-
-
             //suma por retirador
-            datosRetirador.neto_corresponde += totalesPorProduccion[item.produccion].neto*porcentajePorRetirador;
+            datosRetirador.neto_corresponde = totalesPorProduccion[item.produccion].neto*porcentajePorRetirador;
             datosRetirador.neto_retiros += item.neto;
-            datosRetirador.neto_saldo += (totalesPorProduccion[item.produccion].neto*porcentajePorRetirador - item.neto);
+            datosRetirador.neto_saldo = (totalesPorProduccion[item.produccion].neto*porcentajePorRetirador - datosRetirador.neto_retiros);
 
-            datosRetirador.fibra_corresponde += totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador;
+            datosRetirador.fibra_corresponde = totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador;
             datosRetirador.fibra_retiros += item.fibra;
-            datosRetirador.fibra_saldo += (totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador - item.fibra);
+            datosRetirador.fibra_saldo = (totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador - datosRetirador.fibra_retiros);
 
-            datosRetirador.rollos_corresponde += totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador;
+            datosRetirador.rollos_corresponde = totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador;
             datosRetirador.rollos_retiros += item.cantidad;
-            datosRetirador.rollos_saldo += (totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador - item.cantidad);
+            datosRetirador.rollos_saldo = (totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador - datosRetirador.rollos_retiros);
 
             //suma a totales
-            datosProduccion.neto_corresponde += totalesPorProduccion[item.produccion].neto*porcentajePorRetirador;
+            datosProduccion.neto_corresponde = totalesPorProduccion[item.produccion].neto;
             datosProduccion.neto_retiros += item.neto;
-            datosProduccion.neto_saldo += (totalesPorProduccion[item.produccion].neto*porcentajePorRetirador - item.neto);
+            datosProduccion.neto_saldo = (totalesPorProduccion[item.produccion].neto - datosProduccion.neto_retiros);
 
-            datosProduccion.fibra_corresponde += totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador;
+            datosProduccion.fibra_corresponde = totalesPorProduccion[item.produccion].fibra;
             datosProduccion.fibra_retiros += item.fibra;
-            datosProduccion.fibra_saldo += (totalesPorProduccion[item.produccion].fibra*porcentajePorRetirador - item.fibra);
+            datosProduccion.fibra_saldo = (totalesPorProduccion[item.produccion].fibra - datosProduccion.fibra_retiros);
 
-            datosProduccion.rollos_corresponde += totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador;
+            datosProduccion.rollos_corresponde = totalesPorProduccion[item.produccion].cantidad;
             datosProduccion.rollos_retiros += item.cantidad;
-            datosProduccion.rollos_saldo += (totalesPorProduccion[item.produccion].cantidad*porcentajePorRetirador - item.cantidad);
+            datosProduccion.rollos_saldo = (totalesPorProduccion[item.produccion].cantidad - datosProduccion.rollos_retiros);
 
             return result;
         }, [])
 
+        this.calcularRetirosTotales()
+    }
+    calcularRetirosTotales(){
         console.log(this.datosRetiros)
 
+        this.datosRetirosTotales = {
+            fibra_corresponde : 0,
+            fibra_retiros : 0,
+            fibra_saldo : 0,
+
+            neto_corresponde : 0,
+            neto_retiros : 0,
+            neto_saldo : 0,
+
+            rollos_corresponde : 0,
+            rollos_retiros : 0,
+            rollos_saldo : 0,
+
+            retiradores : [],
+        }
+
+        this.datosRetiros.forEach((e:any) => {
+            this.datosRetirosTotales.fibra_corresponde += e.fibra_corresponde
+            this.datosRetirosTotales.fibra_retiros += e.fibra_retiros
+            this.datosRetirosTotales.fibra_saldo += e.fibra_saldo
+            this.datosRetirosTotales.neto_corresponde += e.neto_corresponde
+            this.datosRetirosTotales.neto_retiros += e.neto_retiros
+            this.datosRetirosTotales.neto_saldo += e.neto_saldo
+            this.datosRetirosTotales.rollos_corresponde += e.rollos_corresponde
+            this.datosRetirosTotales.rollos_retiros += e.rollos_retiros
+            this.datosRetirosTotales.rollos_saldo += e.rollos_saldo
+
+            e.retiradores.forEach((ret:any) => {
+                if(!this.datosRetirosTotales.retiradores.some((reti:any) => { return reti.retira == ret.retira })){
+                    this.datosRetirosTotales.retiradores.push({
+                        retira: ret.retira,
+
+                        fibra_corresponde: 0,
+                        fibra_retiros: 0,
+                        fibra_saldo: 0,
+
+                        neto_corresponde: 0,
+                        neto_retiros: 0,
+                        neto_saldo: 0,
+
+                        rollos_corresponde: 0,
+                        rollos_retiros: 0,
+                        rollos_saldo: 0,
+                    })
+                }
+
+                var retirad = this.datosRetirosTotales.retiradores.find((retirador:any) => { return retirador.retira == ret.retira })
+                retirad.fibra_corresponde += ret.fibra_corresponde
+                retirad.fibra_retiros += ret.fibra_retiros
+                retirad.fibra_saldo += ret.fibra_saldo
+
+                retirad.neto_corresponde += ret.neto_corresponde
+                retirad.neto_retiros += ret.neto_retiros
+                retirad.neto_saldo += ret.neto_saldo
+
+                retirad.rollos_corresponde += ret.rollos_corresponde
+                retirad.rollos_retiros += ret.rollos_retiros
+                retirad.rollos_saldo += ret.rollos_saldo
+            });
+        });
     }
+
     porcentajeDeRetiradorEnSociedad(id_retirador:string, id_sociedad:string){
         var porcentaje = 0
         this.grupo_retiros[id_retirador].socios.forEach((socio:any) => {

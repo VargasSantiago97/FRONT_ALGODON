@@ -23,11 +23,13 @@ import { Articulo } from '../../../interfaces/articulos.interface';
 import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 @Component({
     selector: 'app-remitos',
     standalone: true,
-    imports: [TableModule, ButtonModule, ListboxModule, MultiSelectModule, FormsModule, DialogModule, ToastModule, DropdownModule, DividerModule, CalendarModule, InputTextModule, InputTextareaModule],
+    imports: [TableModule, ButtonModule, ListboxModule, MultiSelectModule, FormsModule, DialogModule, ToastModule, DropdownModule, DividerModule, CalendarModule, InputTextModule, InputTextareaModule, InputGroupModule, InputGroupAddonModule],
     providers: [MessageService],
     templateUrl: './remitos.component.html',
     styleUrl: './remitos.component.css'
@@ -46,6 +48,7 @@ export class RemitosComponent {
     sociedades: Sociedad[] = []
     campanas: Campana[] = []
     establecimientos: Establecimiento[] = []
+    establecimientosEnCampana: Establecimiento[] = []
     destinos: Destino[] = []
     transportes: Transporte[] = []
     articulos: Articulo[] = []
@@ -258,9 +261,8 @@ export class RemitosComponent {
         this.remitos = []
         this.cs.apiGet('remitos').subscribe(
             (res: any) => {
-                this.remitos = res.data
+                this.remitos = res.data.filter((e:Remito) => { return e.campana._id == localStorage.getItem('campana_seleccioanda') })
                 this.armarDatosTabla()
-                console.log(this.remitos)
             },
             (err: any) => {
                 console.error(err)
@@ -456,6 +458,7 @@ export class RemitosComponent {
         }
 
         this.setearPuntoNumeroRemito()
+        this.setearEstablecimientosEnCampana()
         this.visible = true
     }
     setearPuntoNumeroRemito(){
@@ -476,6 +479,11 @@ export class RemitosComponent {
 
 
         console.log(this.remito)
+    }
+    setearEstablecimientosEnCampana(){
+        this.establecimientosEnCampana = this.establecimientos.filter((e:Establecimiento) => {
+            return e.id_campana == this.remito.campana._id
+        })
     }
 
     guardar() {

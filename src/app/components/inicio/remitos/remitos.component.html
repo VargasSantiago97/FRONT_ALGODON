@@ -26,7 +26,7 @@
                 <div class="flex align-items-center">
                     {{col.header}}
                     <p-sortIcon field="fecha_filtro"></p-sortIcon>
-                    <p-columnFilter type="{{col.type}}" field="fecha_filtro" display="menu"></p-columnFilter>
+                    <p-columnFilter type="{{col.type}}" field="fecha_filtro" display="menu" filterMatchMode=""></p-columnFilter>
                 </div>
             </th>
             } @else {
@@ -94,10 +94,10 @@
         <div class="row mb-2">
             <div class="col-12 col-lg-4 mb-2">
                 <p-dropdown [options]="campanas" [(ngModel)]="remito.campana" optionLabel="descripcion"
-                    [showClear]="false" placeholder="Campaña" [style]="{width: '100%'}"></p-dropdown>
+                    [showClear]="false" placeholder="Campaña" [style]="{width: '100%'}" (onClick)="setearEstablecimientosEnCampana()"></p-dropdown>
             </div>
             <div class="col-12 col-lg-4 mb-2">
-                <p-dropdown [options]="establecimientos" [(ngModel)]="remito.origen" optionLabel="descripcion"
+                <p-dropdown [options]="establecimientosEnCampana" [(ngModel)]="remito.origen" optionLabel="descripcion"
                     [showClear]="false" placeholder="Origen" [style]="{width: '100%'}"></p-dropdown>
             </div>
             <div class="col-12 col-lg-4 mb-2">
@@ -179,7 +179,10 @@
             </div>
 
             <div class="col-3 mb-2">
-                <input [style]="{width: '100%'}" type="number" pInputText [(ngModel)]="remito.cantidad" />
+                <p-inputGroup>
+                    <p-inputGroupAddon>{{remito.articulos.unidad_medida}}</p-inputGroupAddon>
+                    <input [style]="{width: '100%'}" type="number" pInputText [(ngModel)]="remito.cantidad" />
+                </p-inputGroup>
             </div>
         </div>
 

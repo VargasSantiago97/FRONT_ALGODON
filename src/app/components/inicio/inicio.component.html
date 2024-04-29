@@ -14,8 +14,17 @@
                     <a class="nav-link" [routerLink]="['resumen']">RESUMEN</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                    <a class="nav-link" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #0D6EFD;">
+                        <strong>CAMPAÑA {{campana ? campana.descripcion : ''}}</strong>
+                    </a>
+                    <ul class="dropdown-menu">
+                        @for (camp of campanas; track $index) {
+                        <li><a class="dropdown-item" (click)="seleccionarCampana(camp._id)">{{camp.descripcion}}</a></li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         TABLAS
                     </a>
                     <ul class="dropdown-menu">
